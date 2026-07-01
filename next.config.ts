@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep the CJS-heavy googleapis package out of the bundle (server-only).
+  serverExternalPackages: ["googleapis"],
 };
 
 export default nextConfig;

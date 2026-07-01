@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Brief Builder — Latinovation
 
-## Getting Started
+A guided web app that turns the creative-brief process into a repeatable team tool.
+Pick a client and a creative type → step through an adaptive wizard → AI drafts the
+narrative prose → export a brand-styled `.docx`.
 
-First, run the development server:
+**Phase 1 (current):** Key Visual brief, end-to-end, with `.docx` download.
+**Phase 2 (next):** Google sign-in + auto-save to the right Shared Drive folder.
+**Phase 3:** the other creative archetypes (collateral, ads, social, video, strategy).
+
+## Run it locally
 
 ```bash
+# Node lives in ~/.local (already installed). If `node` isn't found, run:
+export PATH="$HOME/.local/bin:$PATH"
+
+cd ~/Projects/brief-builder
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Live AI writing (optional)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app works without an API key — it assembles drafts from your notes.
+To enable full AI writing:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.local.example .env.local
+# paste your Anthropic API key into .env.local, then restart `npm run dev`
+```
 
-## Learn More
+## Where things live
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `lib/creativeTypes.ts` — the briefable creative types (mirrors ClickUp "Type of Project").
+- `lib/clients.ts` — structured client profiles: brand rules + campaigns + audiences.
+- `lib/sizes.ts` — master catalog of deliverable sizes.
+- `components/Wizard.tsx` — the Key Visual wizard.
+- `app/api/ai/route.ts` — AI drafting (with no-key fallback).
+- `app/api/generate/route.ts` — builds the styled `.docx`.
