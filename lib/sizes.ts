@@ -130,12 +130,27 @@ const TYPE_SIZES: Record<string, SizeOption[]> = {
     { id: "ad-skyscraper-160x600", label: "Wide Skyscraper — 160×600", dimensions: "160x600", category: "Display Network", note: "IAB standard" },
     { id: "ad-mobile-320x50", label: "Mobile Leaderboard — 320×50", dimensions: "320x50", category: "Display Network", note: "IAB standard" },
   ],
-  // Print Ad — publication-dependent; standard fractions (confirm trim/bleed with the publication).
+  // Print Ad — publication-dependent; standard fractions (confirm trim/bleed with the publication),
+  // plus real specs for publications we've confirmed.
   "4480c9ef-aad7-41af-9acb-b955fb662254": [
     { id: "printad-full", label: "Full page — 8.5×11\"", dimensions: "8.5x11in", category: "Print Ad", note: `${PRINT} · confirm trim/bleed with publication` },
     { id: "printad-half-h", label: "Half page, horizontal — 8.5×5.5\"", dimensions: "8.5x5.5in", category: "Print Ad", note: "Confirm with publication" },
     { id: "printad-half-v", label: "Half page, vertical — 4.25×11\"", dimensions: "4.25x11in", category: "Print Ad", note: "Confirm with publication" },
     { id: "printad-quarter", label: "Quarter page — 4.25×5.5\"", dimensions: "4.25x5.5in", category: "Print Ad", note: "Confirm with publication" },
+    {
+      id: "printad-floridahome-full",
+      label: "Full Page — 8×10.75\" trim",
+      dimensions: "8x10.75in",
+      category: "Florida Home",
+      note: `${PRINT} · Bleed 8.25×11" · Trim 8×10.75" · Live area 7.5×10.25"`,
+    },
+    {
+      id: "printad-floridahome-spread",
+      label: "2-Page Spread (Double Truck) — 16×10.75\" trim",
+      dimensions: "16x10.75in",
+      category: "Florida Home",
+      note: `${PRINT} · Bleed 16.25×11" · Trim 16×10.75" · Live area 15.5×10.25"`,
+    },
   ],
 
   // ── Social Content ───────────────────────────────────────────────────────
