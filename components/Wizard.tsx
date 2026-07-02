@@ -302,6 +302,14 @@ export default function Wizard({
   async function saveToDrive() {
     setSaving(true);
     setSaveResult(null);
+    saveToHistory({
+      clientId: client.id,
+      clientName: client.name,
+      creativeTypeId: creativeType.id,
+      creativeTypeShort: creativeType.short,
+      projectName: brief.projectName,
+      brief,
+    });
     try {
       const res = await fetch("/api/save", {
         method: "POST",
@@ -498,6 +506,7 @@ export default function Wizard({
               brandContext={brandContext}
               context={aiContext}
               rows={6}
+              richText
             />
           )}
 
@@ -988,7 +997,7 @@ function Review({
         {has("keyMessages") && row(cfg.keyMessagesLabel, brief.keyMessages)}
         {has("smp") && row("Single-Minded Proposition", brief.smp)}
         {has("toneDirection") && row("Tone & direction", brief.toneDirection)}
-        {has("concept") && row(cfg.conceptLabel, brief.concept)}
+        {has("concept") && row(cfg.conceptLabel, brief.concept ? htmlToPlain(brief.concept) : "")}
         {has("direction") && row("Content direction", brief.contentDirection)}
         {has("direction") && row("Feel / tone", brief.contentFeel)}
         {has("slides") && row(cfg.slideUnit === "Frame" ? "Frames" : "Slides", slideSummary)}

@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { Label, TextArea, Button } from "./ui";
+
+// Lazy-load the rich-text editor (Tiptap/ProseMirror is ~140kB) — only pulled in
+// when a field opts into richText (e.g. the ad concept, for headline/subhead hierarchy).
+const RichText = dynamic(() => import("./RichText"), {
+  ssr: false,
+  loading: () => <div className="rounded-lg border border-[var(--border)] bg-white h-32" />,
+});
 
 interface AiFieldProps {
   label: string;
@@ -16,6 +24,8 @@ interface AiFieldProps {
   /** The rest of the brief filled so far, so drafts stay coherent + on-brief. */
   context?: Record<string, string | undefined>;
   rows?: number;
+  /** Render the editable field as a formatting-capable rich-text box (bold/headings/lists) instead of plain textarea. Stores HTML. */
+  richText?: boolean;
 }
 
 export default function AiField({
@@ -29,6 +39,7 @@ export default function AiField({
   brandContext,
   context,
   rows = 5,
+  richText = false,
 }: AiFieldProps) {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,7 +100,11 @@ export default function AiField({
         </div>
       </div>
 
-      <TextArea rows={rows} value={value} onChange={(e) => onChange(e.target.value)} placeholder={`${label} text…`} />
+      {richText ? (
+        <RichText value={value} onChange={onChange} />
+      ) : (
+        <TextArea rows={rows} value={value} onChange={(e) => onChange(e.target.value)} placeholder={`${label} text…`} />
+      )}
       {warning && <p className="text-xs text-amber-600 mt-1">{warning}</p>}
     </div>
   );

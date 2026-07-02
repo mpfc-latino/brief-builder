@@ -178,9 +178,9 @@ export function buildBriefDocx(brief: BriefData): Document {
   }
 
   // Concept (label varies by deliverable — KV concept, ad concept, script, …)
-  if (brief.concept) {
+  if (brief.concept && htmlHasText(brief.concept)) {
     children.push(h2(cfg?.conceptLabel ?? "Creative Concept"));
-    children.push(...body(brief.concept));
+    children.push(...htmlToDocx(brief.concept, { font: s.body, headingColor: s.accent }));
   }
 
   // Tone & Direction (TV Commercial)
