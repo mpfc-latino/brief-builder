@@ -70,7 +70,7 @@ function makeHelpers(s: DocStyle) {
 
   const bullets = (text: string) =>
     text
-      .split(/\n|•|\*|;/)
+      .split(/\n|•|\*/)
       .map((x) => x.replace(/^[•\s]+/, "").trim())
       .filter(Boolean)
       .map((item) => new Paragraph({ bullet: { level: 0 }, spacing: { after: 40 }, children: [new TextRun({ text: item, size: 21, font: s.body })] }));
@@ -150,13 +150,16 @@ export function buildBriefDocx(brief: BriefData): Document {
   }
 
   // Audience
-  if (brief.audience) {
-    children.push(h2(brief.secondaryAudience ? "Primary Audience" : "Target Audience"));
-    children.push(...bullets(brief.audience));
-  }
-  if (brief.secondaryAudience) {
-    children.push(h2("Secondary Audience"));
-    children.push(...bullets(brief.secondaryAudience));
+  if (brief.audience || brief.secondaryAudience) {
+    children.push(h2("Target Audience"));
+    if (brief.audience) {
+      children.push(h3("Primary"));
+      children.push(...bullets(brief.audience));
+    }
+    if (brief.secondaryAudience) {
+      children.push(h3("Secondary"));
+      children.push(...bullets(brief.secondaryAudience));
+    }
   }
 
   // Strategic insight (Strategy & DM)

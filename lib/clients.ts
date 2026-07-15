@@ -22,13 +22,13 @@ export const CLIENTS: ClientProfile[] = [
         "Refined, warm, cultured. Aspirational but familiar — never theatrical or transactional. Mission line: 'Enriching SWFL lives with the magic of vocal music.' Use 'classically trained artists' and 'artistic excellence'.",
       notes: [
         "Keep the indigo as the constant. Gold is mood/lighting, not a brand color.",
-        "CTAs: Get Tickets · Reserve Your Seats · Subscribe to the Season · Donate Today. Avoid 'Buy Now', 'Click Here', 'Don't Miss Out' — too transactional for the Cultivated Patron.",
+        "CTAs: Get Tickets · Reserve Your Seats · Donate Today. Avoid 'Buy Now', 'Click Here', 'Don't Miss Out' — too transactional for the Cultivated Patron.",
         "Each event must feel distinct from sibling events so it earns its own attendance.",
       ],
     },
     // Primary persona from the GO Brand Book.
     defaultAudience:
-      "The Cultivated Patron — affluent, 55+, community-minded patrons across Collier, Lee, and Charlotte counties; value live cultural experiences, fine dining, and charitable involvement; subscribe to seasons, donate, and bring guests; influenced by trusted curation and peer social proof; read playbills and program notes.",
+      "The Cultivated Patron — affluent, 55+, community-minded patrons across Collier, Lee, and Charlotte counties; value live cultural experiences, fine dining, and charitable involvement; donate and bring guests; influenced by trusted curation and peer social proof; read playbills and program notes.",
     // Real GO programs (from the Brand Book). The guideline does not define a
     // distinct audience per program, so each inherits the Cultivated Patron base
     // (lightly contextualized where the guideline supports it) — refine as needed.
@@ -38,7 +38,7 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-opera-lovers",
         name: "Grand Opera / Opera Lovers",
         audience:
-          "• Affluent, educated adults 55–80, primarily couples, across Collier, Lee, and Charlotte counties; heavy snowbird overlap — most patrons are seasonal residents\n• Drawn to opera itself: canonical repertoire, renowned artists, beloved titles (Puccini, Verdi, Bizet, Gershwin, Mozart), and the prestige of a grand production\n• GO's most loyal and highest-intent segment — subscribers, Maestro Club members, major donors, repeat buyers; also the deepest donor overlap\n• Respond to: artistic credibility, title and composer recognition, world-class framing, prestige venue cues, polished CTAs (Reserve Your Seats, Subscribe to the Season)\n• Avoid: generic lifestyle messaging without artistic substance; anything casual, vague, or that underplays the opera itself\n• Strategic role: Core audience — the revenue anchor, the early adopter, and the segment that stabilizes attendance and institutional loyalty",
+          "• Affluent, educated adults 55–80, primarily couples, across Collier, Lee, and Charlotte counties; heavy snowbird overlap — most patrons are seasonal residents\n• Drawn to opera itself: canonical repertoire, renowned artists, beloved titles (Puccini, Verdi, Bizet, Gershwin, Mozart), and the prestige of a grand production\n• GO's most loyal and highest-intent segment — Maestro Club members, major donors, repeat buyers; also the deepest donor overlap\n• Respond to: artistic credibility, title and composer recognition, world-class framing, prestige venue cues, polished CTAs (Reserve Your Seats, Get Tickets)\n• Avoid: generic lifestyle messaging without artistic substance; anything casual, vague, or that underplays the opera itself\n• Strategic role: Core audience — the revenue anchor, the early adopter, and the segment that stabilizes attendance and institutional loyalty",
       },
       // ── Relationship-Expansion Audience ────────────────────────────────────
       {

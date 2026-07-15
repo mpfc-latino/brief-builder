@@ -567,7 +567,7 @@ export default function Wizard({
               {cfg.mood && (
                 <AiField
                   label={cfg.moodLabel}
-                  hint="Comma or line separated — e.g. Romantic, Warm, Golden, Timeless. AI can suggest a set."
+                  hint="Short bullet-point sentences on tone, style, and brand elements. AI can draft a set — edit freely below."
                   section="mood"
                   value={brief.mood ?? ""}
                   onChange={(v) => set("mood", v)}

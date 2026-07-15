@@ -28,7 +28,7 @@ const SECTION_GUIDE: Record<DraftSection, string> = {
   insight:
     "Write the STRATEGIC INSIGHT: 1–2 tight paragraphs on why this approach, what it competes against, and what past performance implies. Lead with the insight, not throat-clearing. Concrete and directive.",
   mood:
-    "Write the MOOD: a short, comma-separated list of 5–8 evocative single words or two-word phrases that capture the feeling of the piece (e.g. Romantic, Warm, Golden, Timeless). No sentences, no explanation — just the descriptors.",
+    "Write the MOOD: 3–5 short bullet-point sentences describing the feeling the piece should evoke — tone, style elements, and brand elements to reinforce. Return each on its own line starting with • (e.g. '• Tone: Premium, confident, and inviting — let the photography and typography do the selling.'). One full sentence per line, not single words.",
 };
 
 const SYSTEM_PROMPT =
@@ -79,7 +79,8 @@ function fallbackDraft(req: DraftRequest): string {
             : req.section === "mood"
               ? ``
               : `For the team:`;
-  const listSections = req.section === "notes" || req.section === "direction" || req.section === "insight";
+  const listSections =
+    req.section === "notes" || req.section === "direction" || req.section === "insight" || req.section === "mood";
   const body = bullets.length
     ? bullets.join(listSections ? "\n• " : ", ")
     : "(add your notes and regenerate)";
