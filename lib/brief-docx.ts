@@ -68,12 +68,35 @@ function makeHelpers(s: DocStyle) {
       .filter((p) => p.trim())
       .map((p) => new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: p.trim(), size: 21, font: s.body })] }));
 
-  const bullets = (text: string) =>
-    text
-      .split(/\n|•|\*/)
-      .map((x) => x.replace(/^[•\s]+/, "").trim())
+  // Splits on explicit "•"/"*" bullet markers. A line with no marker is a
+  // wrapped continuation of the previous bullet (common with pasted text),
+  // not a new bullet — it's joined back on, without a stray space before
+  // leading punctuation (e.g. "Feature X, Y, and Z." instead of "Feature" /
+  // "X" / "," / "Y" / ", and" / "Z."). Text with no markers at all (e.g. a
+  // plain one-per-line list like the color palette) falls back to one
+  // bullet per line.
+  const bullets = (text: string) => {
+    const lines = text.split("\n").map((l) => l.trim());
+    const hasMarkers = lines.some((l) => /^[•*]\s*/.test(l));
+
+    const items: string[] = [];
+    for (const line of lines) {
+      if (!line) continue;
+      const marker = hasMarkers ? line.match(/^[•*]\s*(.*)$/) : null;
+      if (!hasMarkers || marker) {
+        items.push((marker ? marker[1] : line).trim());
+      } else if (items.length) {
+        const sep = /^[,.;:!?]/.test(line) ? "" : " ";
+        items[items.length - 1] += sep + line;
+      } else {
+        items.push(line);
+      }
+    }
+
+    return items
       .filter(Boolean)
       .map((item) => new Paragraph({ bullet: { level: 0 }, spacing: { after: 40 }, children: [new TextRun({ text: item, size: 21, font: s.body })] }));
+  };
 
   const metaTable = (rows: [string, string][]) =>
     new Table({
