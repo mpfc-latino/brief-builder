@@ -140,6 +140,8 @@ const TYPE_SIZES: Record<string, SizeOption[]> = {
     { id: "printad-half-v", label: "Half page, vertical — 4.25×11\"", dimensions: "4.25x11in", category: "Print Ad", note: "Confirm with publication" },
     { id: "printad-quarter", label: "Quarter page — 4.25×5.5\"", dimensions: "4.25x5.5in", category: "Print Ad", note: "Confirm with publication" },
     { id: "printad-4.75x3.75", label: "4.75×3.75\"", dimensions: "4.75x3.75in", category: "Print Ad", note: "Confirm with publication" },
+    { id: "printad-halfpage-specialsections-10x4.92", label: "Half page ad, Special Sections — 10×4.92\"", dimensions: "10x4.92in", category: "Print Ad", note: "Confirm with publication" },
+    { id: "printad-halfpage-10x9.95", label: "Half page — 10×9.95\"", dimensions: "10x9.95in", category: "Print Ad", note: "Confirm with publication" },
     {
       id: "printad-floridahome-full",
       label: "Full Page — 8×10.75\" trim",
