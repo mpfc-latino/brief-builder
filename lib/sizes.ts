@@ -129,6 +129,8 @@ const TYPE_SIZES: Record<string, SizeOption[]> = {
     { id: "ad-halfpage-300x600", label: "Half Page — 300×600", dimensions: "300x600", category: "Display Network", note: "IAB standard" },
     { id: "ad-skyscraper-160x600", label: "Wide Skyscraper — 160×600", dimensions: "160x600", category: "Display Network", note: "IAB standard" },
     { id: "ad-mobile-320x50", label: "Mobile Leaderboard — 320×50", dimensions: "320x50", category: "Display Network", note: "IAB standard" },
+    { id: "ad-billboard-970x250", label: "Billboard — 970×250", dimensions: "970x250", category: "Display Network", note: "IAB standard · Targeted Digital Display" },
+    { id: "ad-category-sponsorship-554x100", label: "Category Sponsorship — 554×100", dimensions: "554x100", category: "Display Network" },
   ],
   // Print Ad — publication-dependent; standard fractions (confirm trim/bleed with the publication),
   // plus real specs for publications we've confirmed.
