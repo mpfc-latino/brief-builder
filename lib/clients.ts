@@ -88,7 +88,7 @@ export const CLIENTS: ClientProfile[] = [
         { label: "Dark Teal", hex: "#2B606A", note: "depth / secondary primary" },
         { label: "Gray", hex: "#4D4C4C" },
         { label: "Light Teal", hex: "#B4D2D8", note: "secondary" },
-        { label: "Yellow", hex: "#FFF200", note: "accent" },
+        { label: "Violet Night", hex: "#1D132A", note: "accent" },
       ],
       typography: "Barlow family — Regular (body), Bold (titles & key highlights), Italic (secondary info / CTAs).",
       fonts: { heading: "Barlow", body: "Barlow" },
@@ -96,7 +96,7 @@ export const CLIENTS: ClientProfile[] = [
         "Refined confidence — clear, precise, warm. Reassure, guide, inspire. 'Precision engineering', never 'design'. No em dashes. Proof-led.",
       notes: [
         "Lead with quality, peace of mind, craftsmanship, customization — never lowest price.",
-        "Reference proof: 4,000+ 5-star Google reviews · 120K+ installs · 21+ years · Inc. 5000.",
+        "Reference proof: Trusted by homeowners through 150,000+ installations · 5,000+ 5-star Google reviews · 21+ years · Inc. 5000.",
         "Visual: include Sophistication / Minimalist / Detail; exclude Retro / Organic / Rustic. Keep the focal center of hero shots free of text.",
       ],
     },
@@ -147,7 +147,7 @@ export const CLIENTS: ClientProfile[] = [
         id: "msd-past-customers",
         name: "Past Customers and Referral Advocates",
         audience:
-          "• 145,000+ past buyers across all 11 markets; concentrated 55+ in FL and 35–55 in the Carolinas; clustered in HOAs, gated communities, and country clubs where recommendations travel fast\n• Already convinced; carry strong goodwill; willing to recommend when prompted at the right moment; have future needs (second bath, second home, aging-in-place)\n• Draw: easy review/referral moments timed to peak satisfaction; recognition and loyalty gestures; reminders of additional needs\n• Channels: email/SMS to owned database, review-request automation 7–14 days post-install, structured referral program, Nextdoor\n• Strategic role: Highest-efficiency growth lever — reactivation and referral at the lowest acquisition cost in the model",
+          "• 150,000+ past buyers across all 11 markets; concentrated 55+ in FL and 35–55 in the Carolinas; clustered in HOAs, gated communities, and country clubs where recommendations travel fast\n• Already convinced; carry strong goodwill; willing to recommend when prompted at the right moment; have future needs (second bath, second home, aging-in-place)\n• Draw: easy review/referral moments timed to peak satisfaction; recognition and loyalty gestures; reminders of additional needs\n• Channels: email/SMS to owned database, review-request automation 7–14 days post-install, structured referral program, Nextdoor\n• Strategic role: Highest-efficiency growth lever — reactivation and referral at the lowest acquisition cost in the model",
       },
       // ── Stakeholder Audience ───────────────────────────────────────────────
       {
