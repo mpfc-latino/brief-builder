@@ -18,6 +18,12 @@ export type SectionId =
   | "channelsMessaging"
   | "cadenceKpis"
   | "notes"
+  | "scope"
+  | "ownership"
+  | "placement"
+  | "modules"
+  | "userFlows"
+  | "maintenance"
   | "review";
 
 export interface WizardStep {
@@ -351,6 +357,29 @@ export function getWizardConfig(ct: CreativeType): WizardConfig {
         ],
         budget: true,
         notesLabel: "Notes",
+      };
+
+    // ── Webpage ───────────────────────────────────────────────────────────────
+    case "webpage":
+      return {
+        ...BASE,
+        steps: [
+          ...SPINE,
+          { id: "scope", label: "Scope" },
+          { id: "ownership", label: "Content ownership" },
+          { id: "placement", label: "Placement & navigation" },
+          { id: "modules", label: "Page modules" },
+          { id: "userFlows", label: "User flows" },
+          { id: "style", label: "Design direction" },
+          { id: "details", label: "Design notes" },
+          { id: "maintenance", label: "Ownership, intake & maintenance" },
+          { id: "specs", label: "Save & location" },
+          REVIEW,
+        ],
+        palette: true,
+        typography: true,
+        designerNotes: true,
+        designerNotesLabel: "Design direction notes",
       };
   }
 }

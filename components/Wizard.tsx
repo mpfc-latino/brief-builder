@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import type { BriefData, ClientProfile, CreativeType, SourceAsset, SlideUnit } from "@/lib/types";
+import type { BriefData, ClientProfile, CreativeType, SourceAsset, SlideUnit, OwnershipRow, PageModule, UserFlow } from "@/lib/types";
 import { brandContextString } from "@/lib/format";
 import { getSizesFor, categoriesOf, getSize } from "@/lib/sizes";
 import { getWizardConfig, wizardConfigHasStep, type WizardConfig } from "@/lib/sections";
@@ -21,6 +21,18 @@ const DEFAULT_STORY_FLOW =
   "Context / Introduction → Detail Discovery → Technical Explanation → Proof / Process → Result / Outcome";
 
 const emptySlide = (): SlideUnit => ({ title: "", visual: "", onImageText: "", proof: "", purpose: "" });
+const emptyOwnershipRow = (): OwnershipRow => ({ weOwn: "", theyOwn: "" });
+const emptyModule = (): PageModule => ({
+  name: "",
+  purpose: "",
+  audience: "",
+  contentElements: "",
+  owner: "",
+  interactionPattern: "",
+  copyNotes: "",
+  dataStatus: "",
+});
+const emptyFlow = (): UserFlow => ({ input: "", process: "", output: "", metric: "" });
 
 type SaveResult =
   | { ok: true; link: string; name: string }
@@ -108,6 +120,15 @@ export default function Wizard({
       keyMessages: "",
       smp: "",
       toneDirection: "",
+      // webpage
+      scopeIncluded: "",
+      scopeExcluded: "",
+      governingPrinciple: "",
+      ownershipMap: [emptyOwnershipRow()],
+      placementNotes: "",
+      pageModules: [emptyModule()],
+      userFlows: [emptyFlow()],
+      ownershipIntake: "",
       status: "Draft for review",
     }
   );
@@ -162,6 +183,51 @@ export default function Wizard({
   }
   function removeSlide(i: number) {
     setBrief((b) => ({ ...b, slides: (b.slides ?? []).filter((_, idx) => idx !== i) }));
+  }
+
+  // ---- ownership map repeater (Webpage: Governing Principle) ----
+  function updateOwnershipRow(i: number, patch: Partial<OwnershipRow>) {
+    setBrief((b) => {
+      const arr = [...(b.ownershipMap ?? [])];
+      arr[i] = { ...arr[i], ...patch };
+      return { ...b, ownershipMap: arr };
+    });
+  }
+  function addOwnershipRow() {
+    setBrief((b) => ({ ...b, ownershipMap: [...(b.ownershipMap ?? []), emptyOwnershipRow()] }));
+  }
+  function removeOwnershipRow(i: number) {
+    setBrief((b) => ({ ...b, ownershipMap: (b.ownershipMap ?? []).filter((_, idx) => idx !== i) }));
+  }
+
+  // ---- page module repeater (Webpage: Content Modules) ----
+  function updateModule(i: number, patch: Partial<PageModule>) {
+    setBrief((b) => {
+      const arr = [...(b.pageModules ?? [])];
+      arr[i] = { ...arr[i], ...patch };
+      return { ...b, pageModules: arr };
+    });
+  }
+  function addModule() {
+    setBrief((b) => ({ ...b, pageModules: [...(b.pageModules ?? []), emptyModule()] }));
+  }
+  function removeModule(i: number) {
+    setBrief((b) => ({ ...b, pageModules: (b.pageModules ?? []).filter((_, idx) => idx !== i) }));
+  }
+
+  // ---- user flow repeater (Webpage: User Flows) ----
+  function updateFlow(i: number, patch: Partial<UserFlow>) {
+    setBrief((b) => {
+      const arr = [...(b.userFlows ?? [])];
+      arr[i] = { ...arr[i], ...patch };
+      return { ...b, userFlows: arr };
+    });
+  }
+  function addFlow() {
+    setBrief((b) => ({ ...b, userFlows: [...(b.userFlows ?? []), emptyFlow()] }));
+  }
+  function removeFlow(i: number) {
+    setBrief((b) => ({ ...b, userFlows: (b.userFlows ?? []).filter((_, idx) => idx !== i) }));
   }
 
   function toggleSize(id: string) {
@@ -261,6 +327,21 @@ export default function Wizard({
       keyMessages: has("keyMessages") ? brief.keyMessages : "",
       smp: has("smp") ? brief.smp : "",
       toneDirection: has("toneDirection") ? brief.toneDirection : "",
+      // webpage
+      scopeIncluded: has("scope") ? brief.scopeIncluded : "",
+      scopeExcluded: has("scope") ? brief.scopeExcluded : "",
+      governingPrinciple: has("ownership") ? brief.governingPrinciple : "",
+      ownershipMap: has("ownership")
+        ? (brief.ownershipMap ?? []).filter((r) => r.weOwn.trim() || r.theyOwn.trim())
+        : [],
+      placementNotes: has("placement") ? brief.placementNotes : "",
+      pageModules: has("modules")
+        ? (brief.pageModules ?? []).filter((m) => m.name.trim() || m.purpose.trim() || m.contentElements.trim())
+        : [],
+      userFlows: has("userFlows")
+        ? (brief.userFlows ?? []).filter((f) => f.input.trim() || f.process.trim() || f.output.trim())
+        : [],
+      ownershipIntake: has("maintenance") ? brief.ownershipIntake : "",
     };
   }
 
@@ -764,6 +845,163 @@ export default function Wizard({
             />
           )}
 
+          {/* ── Webpage: Scope ── */}
+          {current.id === "scope" && (
+            <div className="space-y-5">
+              <AiField
+                label="In scope"
+                hint="What's being built now, in concrete numbers (pages/sections, venues, items covered — whatever counts here)."
+                section="scope"
+                value={brief.scopeIncluded ?? ""}
+                onChange={(v) => set("scopeIncluded", v)}
+                clientName={client.name}
+                creativeTypeName={creativeType.short}
+                brandContext={brandContext}
+                context={aiContext}
+                rows={4}
+              />
+              <div>
+                <Label hint="What's explicitly excluded from this phase and why, plus anything noted as a future phase.">
+                  Out of scope / future phases
+                </Label>
+                <TextArea rows={5} value={brief.scopeExcluded ?? ""} onChange={(e) => set("scopeExcluded", e.target.value)} />
+              </div>
+            </div>
+          )}
+
+          {/* ── Webpage: Governing Principle / content ownership ── */}
+          {current.id === "ownership" && (
+            <div className="space-y-5">
+              <AiField
+                label="Governing principle"
+                hint="The single idea the ownership split rests on — what we state directly vs. what we summarize and link to its authoritative source, and why copying detail in is a risk we'd own."
+                section="principle"
+                value={brief.governingPrinciple ?? ""}
+                onChange={(v) => set("governingPrinciple", v)}
+                clientName={client.name}
+                creativeTypeName={creativeType.short}
+                brandContext={brandContext}
+                context={aiContext}
+                rows={4}
+              />
+              <div>
+                <Label hint="One row per topic. Left: we state it directly. Right: owned elsewhere — we summarize and link.">
+                  Content ownership map
+                </Label>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2 text-[11px] font-bold uppercase tracking-wide text-gray-400 px-1">
+                    <span>We own & state</span>
+                    <span>They own — we summarize & link</span>
+                  </div>
+                  {(brief.ownershipMap ?? []).map((r, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <TextInput placeholder="e.g. Run time and format" value={r.weOwn} onChange={(e) => updateOwnershipRow(i, { weOwn: e.target.value })} />
+                      <TextInput placeholder="e.g. Parking, directions, valet" value={r.theyOwn} onChange={(e) => updateOwnershipRow(i, { theyOwn: e.target.value })} />
+                      <button onClick={() => removeOwnershipRow(i)} className="text-gray-400 hover:text-red-500 text-lg px-1" title="Remove">
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  <Button variant="subtle" type="button" onClick={addOwnershipRow}>
+                    + Add row
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Webpage: Placement & information architecture ── */}
+          {current.id === "placement" && (
+            <AiField
+              label="Placement & navigation"
+              hint="URL, where it sits in primary navigation and any secondary entry points, and the page type (single page vs. hub, anchored sections, accordion FAQ, etc.) with a one-line rationale."
+              section="placement"
+              value={brief.placementNotes ?? ""}
+              onChange={(v) => set("placementNotes", v)}
+              clientName={client.name}
+              creativeTypeName={creativeType.short}
+              brandContext={brandContext}
+              context={aiContext}
+              rows={6}
+            />
+          )}
+
+          {/* ── Webpage: Content modules (the build spec) ── */}
+          {current.id === "modules" && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-500">
+                One block per page module/section. This is what the developer and copywriter build from.
+              </p>
+              {(brief.pageModules ?? []).map((m, i) => (
+                <div key={i} className="rounded-lg border border-[var(--border)] p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-[var(--brand)]">Module {i + 1}</span>
+                    {(brief.pageModules?.length ?? 0) > 1 && (
+                      <button onClick={() => removeModule(i)} className="text-gray-400 hover:text-red-500 text-lg px-1" title="Remove">
+                        ×
+                      </button>
+                    )}
+                  </div>
+                  <TextInput placeholder="Module number and name — e.g. 2. Find Your Venue" value={m.name} onChange={(e) => updateModule(i, { name: e.target.value })} />
+                  <TextInput placeholder="Purpose — one sentence" value={m.purpose} onChange={(e) => updateModule(i, { purpose: e.target.value })} />
+                  <TextInput placeholder="Primary audience" value={m.audience} onChange={(e) => updateModule(i, { audience: e.target.value })} />
+                  <TextArea rows={3} placeholder="Content elements — bulleted list of what appears" value={m.contentElements} onChange={(e) => updateModule(i, { contentElements: e.target.value })} />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <TextInput placeholder="Owner of truth (us / partner / split)" value={m.owner} onChange={(e) => updateModule(i, { owner: e.target.value })} />
+                    <TextInput placeholder="Interaction pattern (static / accordion / tabbed / table)" value={m.interactionPattern} onChange={(e) => updateModule(i, { interactionPattern: e.target.value })} />
+                    <TextInput placeholder="Data status (confirmed / placeholder)" value={m.dataStatus} onChange={(e) => updateModule(i, { dataStatus: e.target.value })} />
+                  </div>
+                  <TextArea rows={2} placeholder="Copy notes — tone, length, brand rules" value={m.copyNotes} onChange={(e) => updateModule(i, { copyNotes: e.target.value })} />
+                </div>
+              ))}
+              <Button variant="subtle" type="button" onClick={addModule}>
+                + Add module
+              </Button>
+            </div>
+          )}
+
+          {/* ── Webpage: User flows ── */}
+          {current.id === "userFlows" && (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-500">Show the page working, not just existing. One flow per persona/scenario.</p>
+              {(brief.userFlows ?? []).map((f, i) => (
+                <div key={i} className="rounded-lg border border-[var(--border)] p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-[var(--brand)]">Flow {i + 1}</span>
+                    {(brief.userFlows?.length ?? 0) > 1 && (
+                      <button onClick={() => removeFlow(i)} className="text-gray-400 hover:text-red-500 text-lg px-1" title="Remove">
+                        ×
+                      </button>
+                    )}
+                  </div>
+                  <TextArea rows={2} placeholder="Input — who arrives, from where, wanting what" value={f.input} onChange={(e) => updateFlow(i, { input: e.target.value })} />
+                  <TextArea rows={2} placeholder="Process — what they do on the page" value={f.process} onChange={(e) => updateFlow(i, { process: e.target.value })} />
+                  <TextArea rows={2} placeholder="Output — what happens as a result" value={f.output} onChange={(e) => updateFlow(i, { output: e.target.value })} />
+                  <TextInput placeholder="Success metric" value={f.metric} onChange={(e) => updateFlow(i, { metric: e.target.value })} />
+                </div>
+              ))}
+              <Button variant="subtle" type="button" onClick={addFlow}>
+                + Add flow
+              </Button>
+            </div>
+          )}
+
+          {/* ── Webpage: Ownership, intake & maintenance ── */}
+          {current.id === "maintenance" && (
+            <AiField
+              label="Ownership, intake & maintenance"
+              hint="Who owns build vs. who owns it after handover; what structured information still needs to come from the client (name each request and what it should contain); the review cadence that keeps content from going stale."
+              section="maintenance"
+              value={brief.ownershipIntake ?? ""}
+              onChange={(v) => set("ownershipIntake", v)}
+              clientName={client.name}
+              creativeTypeName={creativeType.short}
+              brandContext={brandContext}
+              context={aiContext}
+              rows={7}
+            />
+          )}
+
           {/* ── Key Messages ── */}
           {current.id === "keyMessages" && (
             <div className="space-y-3">
@@ -993,6 +1231,18 @@ function Review({
         {row("Objective", brief.objective)}
         {row(brief.secondaryAudience ? "Primary audience" : "Audience", brief.audience)}
         {brief.secondaryAudience && row("Secondary audience", brief.secondaryAudience)}
+        {has("scope") && row("In scope", brief.scopeIncluded)}
+        {has("scope") && row("Out of scope / future phases", brief.scopeExcluded)}
+        {has("ownership") && row("Governing principle", brief.governingPrinciple)}
+        {has("ownership") &&
+          row(
+            "Content ownership map",
+            (brief.ownershipMap ?? [])
+              .filter((r) => r.weOwn.trim() || r.theyOwn.trim())
+              .map((r) => `${r.weOwn}  →  we state · ${r.theyOwn}  →  we link`)
+              .join("\n")
+          )}
+        {has("placement") && row("Placement & navigation", brief.placementNotes)}
         {has("insight") && row("Strategic insight", brief.strategicInsight)}
         {has("keyMessages") && row(cfg.keyMessagesLabel, brief.keyMessages)}
         {has("smp") && row("Single-Minded Proposition", brief.smp)}
@@ -1001,6 +1251,22 @@ function Review({
         {has("direction") && row("Content direction", brief.contentDirection)}
         {has("direction") && row("Feel / tone", brief.contentFeel)}
         {has("slides") && row(cfg.slideUnit === "Frame" ? "Frames" : "Slides", slideSummary)}
+        {has("modules") &&
+          row(
+            "Page modules",
+            (brief.pageModules ?? [])
+              .filter((m) => m.name.trim())
+              .map((m) => `${m.name}${m.purpose ? ` — ${m.purpose}` : ""}`)
+              .join("\n")
+          )}
+        {has("userFlows") &&
+          row(
+            "User flows",
+            (brief.userFlows ?? [])
+              .filter((f) => f.input.trim() || f.process.trim() || f.output.trim())
+              .map((f, i) => `${i + 1}. ${f.input} → ${f.process} → ${f.output}${f.metric ? ` (metric: ${f.metric})` : ""}`)
+              .join("\n")
+          )}
         {cfg.palette && row("Palette", brief.palette)}
         {cfg.typography && row("Typography", brief.typography)}
         {cfg.sourceAssets &&
@@ -1034,6 +1300,7 @@ function Review({
               </ul>
             ) : null
           )}
+        {has("maintenance") && row("Ownership, intake & maintenance", brief.ownershipIntake)}
         {cfg.sizes && row("Sizes", sizeLabels.join(", "))}
         {cfg.duration && row("Duration", brief.duration)}
         {row("Save deliverables as", brief.saveAs)}

@@ -128,7 +128,42 @@ function makeHelpers(s: DocStyle) {
       ),
     });
 
-  return { h1, h2, h3, body, bullets, metaTable };
+  // A general-purpose data table with a bold header row and evenly-split
+  // columns — used for the Webpage brief's structured sections (ownership
+  // map, page modules, user flows), where neither column is a "label".
+  const dataTable = (header: string[], rows: string[][]) => {
+    const colW = Math.floor(TABLE_W / header.length);
+    const row = (cells: string[], bold: boolean) =>
+      new TableRow({
+        children: cells.map(
+          (text) =>
+            new TableCell({
+              width: { size: colW, type: WidthType.DXA },
+              children: [
+                new Paragraph({
+                  children: [new TextRun({ text, bold, size: 20, font: s.body, color: bold ? s.accent : undefined })],
+                }),
+              ],
+            })
+        ),
+      });
+    return new Table({
+      width: { size: TABLE_W, type: WidthType.DXA },
+      columnWidths: header.map(() => colW),
+      layout: TableLayoutType.FIXED,
+      borders: {
+        top: { style: BorderStyle.SINGLE, size: 2, color: "E3E6EC" },
+        bottom: { style: BorderStyle.SINGLE, size: 2, color: "E3E6EC" },
+        left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "E3E6EC" },
+        insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "E3E6EC" },
+      },
+      rows: [row(header, true), ...rows.map((r) => row(r, false))],
+    });
+  };
+
+  return { h1, h2, h3, body, bullets, metaTable, dataTable };
 }
 
 /** Build the styled Word document for a brief. Pure — no I/O. */
@@ -140,7 +175,7 @@ export function buildBriefDocx(brief: BriefData): Document {
   const sizes = (brief.sizeIds || []).map((id) => getSize(id)).filter(Boolean);
 
   const s = styleFor(client);
-  const { h1, h2, h3, body, bullets, metaTable } = makeHelpers(s);
+  const { h1, h2, h3, body, bullets, metaTable, dataTable } = makeHelpers(s);
   const filePrefix = brief.saveAs?.trim() || brief.projectName;
 
   const children: (Paragraph | Table)[] = [];
@@ -182,6 +217,75 @@ export function buildBriefDocx(brief: BriefData): Document {
     if (brief.secondaryAudience) {
       children.push(h3("Secondary"));
       children.push(...bullets(brief.secondaryAudience));
+    }
+  }
+
+  // Scope (Webpage)
+  if (brief.scopeIncluded || brief.scopeExcluded) {
+    children.push(h2("Scope"));
+    if (brief.scopeIncluded) {
+      children.push(h3("In Scope"));
+      children.push(...body(brief.scopeIncluded));
+    }
+    if (brief.scopeExcluded) {
+      children.push(h3("Out of Scope / Future Phases"));
+      children.push(...body(brief.scopeExcluded));
+    }
+  }
+
+  // Governing principle + content ownership map (Webpage)
+  if (brief.governingPrinciple || brief.ownershipMap?.length) {
+    children.push(h2("Governing Principle"));
+    if (brief.governingPrinciple) children.push(...body(brief.governingPrinciple));
+    const ownershipRows = (brief.ownershipMap ?? []).filter((r) => r.weOwn.trim() || r.theyOwn.trim());
+    if (ownershipRows.length) {
+      children.push(h3("Content Ownership Map"));
+      children.push(
+        dataTable(
+          ["We own & state", "They own — we summarize & link"],
+          ownershipRows.map((r) => [r.weOwn, r.theyOwn])
+        )
+      );
+    }
+  }
+
+  // Placement & information architecture (Webpage)
+  if (brief.placementNotes) {
+    children.push(h2("Placement & Navigation"));
+    children.push(...body(brief.placementNotes));
+  }
+
+  // Content modules — the build spec (Webpage)
+  if (brief.pageModules?.length) {
+    const modules = brief.pageModules.filter((m) => m.name.trim() || m.purpose.trim() || m.contentElements.trim());
+    if (modules.length) {
+      children.push(h2("Content Modules"));
+      modules.forEach((m, i) => {
+        children.push(h3(m.name || `Module ${i + 1}`));
+        const rows: [string, string][] = [];
+        if (m.purpose) rows.push(["Purpose", m.purpose]);
+        if (m.audience) rows.push(["Primary audience", m.audience]);
+        if (m.contentElements) rows.push(["Content elements", m.contentElements]);
+        if (m.owner) rows.push(["Owner of truth", m.owner]);
+        if (m.interactionPattern) rows.push(["Interaction pattern", m.interactionPattern]);
+        if (m.copyNotes) rows.push(["Copy notes", m.copyNotes]);
+        if (m.dataStatus) rows.push(["Data status", m.dataStatus]);
+        if (rows.length) children.push(metaTable(rows));
+      });
+    }
+  }
+
+  // User flows (Webpage)
+  if (brief.userFlows?.length) {
+    const flows = brief.userFlows.filter((f) => f.input.trim() || f.process.trim() || f.output.trim());
+    if (flows.length) {
+      children.push(h2("User Flows"));
+      children.push(
+        dataTable(
+          ["Input", "Process", "Output", "Metric"],
+          flows.map((f) => [f.input, f.process, f.output, f.metric])
+        )
+      );
     }
   }
 
@@ -340,6 +444,12 @@ export function buildBriefDocx(brief: BriefData): Document {
   if (brief.designerNotes) {
     children.push(h2(cfg?.designerNotes ? titleCase(cfg.designerNotesLabel ?? "Notes for Designer") : titleCase(cfg?.notesLabel ?? "Notes for Designer")));
     children.push(...bullets(brief.designerNotes));
+  }
+
+  // Ownership, intake & maintenance (Webpage)
+  if (brief.ownershipIntake) {
+    children.push(h2("Ownership, Intake & Maintenance"));
+    children.push(...body(brief.ownershipIntake));
   }
 
   // Specs

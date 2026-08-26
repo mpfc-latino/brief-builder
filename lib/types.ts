@@ -5,9 +5,10 @@ export type Archetype =
   | "collateral"
   | "ad"
   | "social"
-  | "strategy";
+  | "strategy"
+  | "webpage";
 
-export type ServiceGroup = "D&CP" | "DM";
+export type ServiceGroup = "D&CP" | "DM" | "WD";
 
 /** One option in the ClickUp "Type of Project" field that gets a brief. */
 export interface CreativeType {
@@ -76,6 +77,33 @@ export interface SlideUnit {
   purpose: string; // storytelling purpose of this slide
 }
 
+/** One row of the content-ownership map (Webpage): what we state vs. what we
+ *  summarize-and-link to the authoritative source (venue, partner, vendor). */
+export interface OwnershipRow {
+  weOwn: string; // we own and state this directly
+  theyOwn: string; // owned elsewhere — we summarize + link
+}
+
+/** One content module / page section in the Webpage build spec. */
+export interface PageModule {
+  name: string; // module number + name
+  purpose: string; // one sentence
+  audience: string; // primary audience for this module
+  contentElements: string; // bulleted list of what appears
+  owner: string; // owner of truth — us, partner, split
+  interactionPattern: string; // static, accordion, tabbed, table…
+  copyNotes: string; // tone, length, brand rules
+  dataStatus: string; // confirmed or placeholder
+}
+
+/** One user flow (Webpage): input → process → output, with a success metric. */
+export interface UserFlow {
+  input: string;
+  process: string;
+  output: string;
+  metric: string;
+}
+
 /** Everything captured for a brief. Optional fields appear per archetype. */
 export interface BriefData {
   // Step 1 — identity
@@ -142,6 +170,16 @@ export interface BriefData {
   keyMessages?: string;
   smp?: string;
   toneDirection?: string;
+
+  // ── Webpage ──
+  scopeIncluded?: string; // in scope — what's built now, in numbers
+  scopeExcluded?: string; // out of scope / future phases, with why
+  governingPrinciple?: string; // the one idea the ownership split rests on
+  ownershipMap?: OwnershipRow[]; // we-state vs. we-summarize-and-link, per topic
+  placementNotes?: string; // URL, nav placement, entry points, page type
+  pageModules?: PageModule[]; // the module-by-module build spec
+  userFlows?: UserFlow[]; // input → process → output, per persona
+  ownershipIntake?: string; // who owns build/maintenance, intake requests, review cadence
 
   status: string;
 }

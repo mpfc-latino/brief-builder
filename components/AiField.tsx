@@ -14,7 +14,17 @@ const RichText = dynamic(() => import("./RichText"), {
 interface AiFieldProps {
   label: string;
   hint?: string;
-  section: "objective" | "concept" | "notes" | "direction" | "insight" | "mood";
+  section:
+    | "objective"
+    | "concept"
+    | "notes"
+    | "direction"
+    | "insight"
+    | "mood"
+    | "scope"
+    | "principle"
+    | "placement"
+    | "maintenance";
   value: string;
   onChange: (v: string) => void;
   // context for the AI draft

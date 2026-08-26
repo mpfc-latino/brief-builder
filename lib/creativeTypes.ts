@@ -2,8 +2,9 @@ import type { CreativeType } from "./types";
 
 // Mirrors the briefable options in the ClickUp "Type of Project" custom field
 // (list 901707171501, field da5ec3b4-92fa-4fdc-983c-434bf1eea8f6).
-// Only DM (blue) and D&CP (green) options are included — these are the ones
-// that get a brief. B&S, WD, and Admin options are intentionally excluded.
+// DM (blue), D&CP (green), and WD Webpage/Landing Page are included — these are
+// the ones that get a brief. B&S, the rest of WD, and Admin are intentionally
+// excluded (no brief shape defined for them yet).
 
 export const CREATIVE_TYPES: CreativeType[] = [
   // --- D&CP — Design & Creative Production (green) ---
@@ -34,6 +35,9 @@ export const CREATIVE_TYPES: CreativeType[] = [
   { id: "00f85baa-f136-4ee4-91fa-ad3898907c30", name: "DM Digital Campaign Strategy", short: "Digital Campaign Strategy", group: "DM", archetype: "strategy" },
   { id: "d1796326-24ad-4d01-8960-ab4cb43dd014", name: "DM Email Mkting E-blast", short: "E-blast", group: "DM", archetype: "strategy" },
   { id: "c3b43e9f-6a6b-44de-ab11-a73aff9e0c83", name: "DM Email Mkting E-vite", short: "E-vite", group: "DM", archetype: "strategy" },
+
+  // --- WD — Web Design (yellow) ---
+  { id: "32b90049-65fd-4903-99c9-19770f81b18b", name: "WD Webpage/Landing Page", short: "Webpage", group: "WD", archetype: "webpage" },
 ];
 
 export const ARCHETYPE_LABELS: Record<string, string> = {
@@ -42,6 +46,7 @@ export const ARCHETYPE_LABELS: Record<string, string> = {
   ad: "Advertising",
   social: "Social Content",
   strategy: "Strategy & Digital Marketing",
+  webpage: "Webpage",
 };
 
 export function getCreativeType(id: string): CreativeType | undefined {
@@ -57,4 +62,5 @@ export const LIVE_ARCHETYPES = new Set([
   "ad",
   "social",
   "strategy",
+  "webpage",
 ]);

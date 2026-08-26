@@ -11,9 +11,10 @@ import { loadHistory, deleteFromHistory, formatSavedAt, type HistoryEntry } from
 const GROUP_COLOR: Record<string, string> = {
   "D&CP": "#30a46c",
   DM: "#0091ff",
+  WD: "#ffc53d",
 };
 
-const ARCHETYPE_ORDER: Archetype[] = ["key-visual", "collateral", "ad", "social", "strategy"];
+const ARCHETYPE_ORDER: Archetype[] = ["key-visual", "collateral", "ad", "social", "strategy", "webpage"];
 
 export default function BriefApp() {
   const [clientId, setClientId] = useState(CLIENTS[0]?.id ?? "");

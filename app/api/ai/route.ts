@@ -4,7 +4,17 @@ import { GoogleGenAI } from "@google/genai";
 
 export const runtime = "nodejs";
 
-type DraftSection = "objective" | "concept" | "notes" | "direction" | "insight" | "mood";
+type DraftSection =
+  | "objective"
+  | "concept"
+  | "notes"
+  | "direction"
+  | "insight"
+  | "mood"
+  | "scope"
+  | "principle"
+  | "placement"
+  | "maintenance";
 
 interface DraftRequest {
   action: "draft";
@@ -29,6 +39,14 @@ const SECTION_GUIDE: Record<DraftSection, string> = {
     "Write the STRATEGIC INSIGHT: 1–2 tight paragraphs on why this approach, what it competes against, and what past performance implies. Lead with the insight, not throat-clearing. Concrete and directive.",
   mood:
     "Write the MOOD: 3–5 short bullet-point sentences describing the feeling the piece should evoke — tone, style elements, and brand elements to reinforce. Return each on its own line starting with • (e.g. '• Tone: Premium, confident, and inviting — let the photography and typography do the selling.'). One full sentence per line, not single words.",
+  scope:
+    "Write the SCOPE: state what's in scope for this build in concrete numbers (pages, sections, items covered), then what's explicitly out of scope for this phase and why, then one line noting what's planned for a future phase if relevant. Short paragraphs or tight bullet lines — never vague.",
+  principle:
+    "Write the GOVERNING PRINCIPLE: one or two sentences stating the single idea the page's content-ownership split rests on (what we state directly vs. what we summarize and link to its authoritative source), then one line of rationale for why copying that detail in creates a maintenance risk we'd own. Direct, no throat-clearing.",
+  placement:
+    "Write the PLACEMENT & NAVIGATION section: where this page lives (URL), where it sits in primary navigation and any secondary entry points, the page type (single page vs. hub, anchored sections, accordion, etc.), and one line of rationale for that structure. Concrete and buildable, not aspirational.",
+  maintenance:
+    "Write the OWNERSHIP, INTAKE & MAINTENANCE section: who owns build vs. who owns it after handover, what structured information still needs to come from the client before this can be built (name each request and what it should contain), and the review cadence that keeps the content from going stale. Concrete and actionable.",
 };
 
 const SYSTEM_PROMPT =
@@ -78,9 +96,22 @@ function fallbackDraft(req: DraftRequest): string {
             ? `The strategic insight:`
             : req.section === "mood"
               ? ``
-              : `For the team:`;
+              : req.section === "scope"
+                ? `In scope for this phase:`
+                : req.section === "principle"
+                  ? `The governing principle:`
+                  : req.section === "placement"
+                    ? `This page lives at:`
+                    : req.section === "maintenance"
+                      ? `Ownership and next inputs needed:`
+                      : `For the team:`;
   const listSections =
-    req.section === "notes" || req.section === "direction" || req.section === "insight" || req.section === "mood";
+    req.section === "notes" ||
+    req.section === "direction" ||
+    req.section === "insight" ||
+    req.section === "mood" ||
+    req.section === "scope" ||
+    req.section === "maintenance";
   const body = bullets.length
     ? bullets.join(listSections ? "\n• " : ", ")
     : "(add your notes and regenerate)";
