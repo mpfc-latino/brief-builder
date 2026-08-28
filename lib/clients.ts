@@ -22,21 +22,28 @@ export const CLIENTS: ClientProfile[] = [
         "Refined, warm, cultured. Aspirational but familiar — never theatrical or transactional. Mission line: 'Enriching SWFL lives with the magic of vocal music.' Use 'classically trained artists' and 'artistic excellence'.",
       notes: [
         "Keep the indigo as the constant. Gold is mood/lighting, not a brand color.",
-        "CTAs: Get Tickets · Reserve Your Seats · Donate Today. Avoid 'Buy Now', 'Click Here', 'Don't Miss Out' — too transactional for the Cultivated Patron.",
+        "CTAs: Get Tickets · Reserve Your Seats · Donate Today. Avoid 'Buy Now', 'Click Here', 'Don't Miss Out' — too transactional for Grand Opera / Opera Lovers.",
         "Each event must feel distinct from sibling events so it earns its own attendance.",
       ],
     },
-    // Primary persona from the GO Brand Book.
+    // Core-tier persona from the governing GO Organizational Audience Model
+    // (vault: 01_CLIENTES/Gulfshore Opera/GO Organizational Audience Model.md).
+    // Preferred name per that doc's Naming Reconciliation table is "Grand Opera /
+    // Opera Lovers" — "Cultivated Patron" is the older Season 13 doc's label,
+    // retained below only as a cross-reference, not the primary name.
     defaultAudience:
-      "The Cultivated Patron — affluent, 55+, community-minded patrons across Collier, Lee, and Charlotte counties; value live cultural experiences, fine dining, and charitable involvement; donate and bring guests; influenced by trusted curation and peer social proof; read playbills and program notes.",
-    // Real GO programs (from the Brand Book). The guideline does not define a
-    // distinct audience per program, so each inherits the Cultivated Patron base
-    // (lightly contextualized where the guideline supports it) — refine as needed.
+      "Grand Opera / Opera Lovers (Core tier; formerly referenced as the Cultivated Patron) — affluent, 55+, community-minded patrons across Collier, Lee, and Charlotte counties; value live cultural experiences, fine dining, and charitable involvement; donate and bring guests; influenced by trusted curation and peer social proof; read playbills and program notes.",
+    // The six segments of the governing GO Organizational Audience Model
+    // (v1.1, Aug 28 2026) — Core, Relationship-Expansion, Growth, Funding,
+    // Stakeholder, and Mission tiers. This model supersedes the Season 13
+    // Marketing Strategy / Listings by County groupings for tagging purposes;
+    // every brief should tag to one of these six segments, not those season docs.
     campaigns: [
       // ── Core Audience ──────────────────────────────────────────────────────
       {
         id: "go-opera-lovers",
         name: "Grand Opera / Opera Lovers",
+        type: "Consumer",
         audience:
           "• Affluent, educated adults 55–80, primarily couples, across Collier, Lee, and Charlotte counties; heavy snowbird overlap — most patrons are seasonal residents\n• Drawn to opera itself: canonical repertoire, renowned artists, beloved titles (Puccini, Verdi, Bizet, Gershwin, Mozart), and the prestige of a grand production\n• GO's most loyal and highest-intent segment — Maestro Club members, major donors, repeat buyers; also the deepest donor overlap\n• Respond to: artistic credibility, title and composer recognition, world-class framing, prestige venue cues, polished CTAs (Reserve Your Seats, Get Tickets)\n• Avoid: generic lifestyle messaging without artistic substance; anything casual, vague, or that underplays the opera itself\n• Strategic role: Core audience — the revenue anchor, the early adopter, and the segment that stabilizes attendance and institutional loyalty",
       },
@@ -44,6 +51,7 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "go-social-occasional",
         name: "Social & Occasional Attendees",
+        type: "Consumer",
         audience:
           "• Affluent, culturally interested adults 45–75 — couples, friend groups, club and donor circles, women's social groups — across Collier, Lee, and Charlotte counties; strong snowbird and year-round mix\n• Drawn to the occasion as much as the art: elegant venues, cocktail and dinner settings, themed concerts, galas, luncheons, and community events\n• Not necessarily opera-literate — motivation is social, experiential, and lifestyle-driven; messaging must feel inviting, not academic\n• Key event types: Taste of Opera, Songs of Love, Style & Song Luncheon, Masquerade Gala, country-club soirées, Broadway crossover programs\n• Respond to: romantic, elegant, festive framing; venue and atmosphere cues; CTAs like 'Reserve Your Seats,' 'Join us for an elegant evening,' 'Bring a friend'\n• Strategic role: Relationship-expansion audience — helps GO grow beyond core opera loyalists and build broader community support",
       },
@@ -51,6 +59,7 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "go-newcomers",
         name: "Newcomers",
+        type: "Consumer",
         audience:
           "• Culturally curious adults 30–65 — couples, individuals, new residents, local professionals, guests of loyal patrons — across SWFL; the broadest demographic range of all segments\n• Being introduced to GO or opera for the first time; no prior relationship with the art form or the organization\n• Motivated by curiosity, recognizable titles, emotional hooks, and welcoming framing — not repertoire depth or institutional loyalty\n• Key entry points: Songs of Love, Opera to Broadway, Carmen, Porgy and Bess, community concerts, social events, high-recognition titles\n• Respond to: clarity, emotional storytelling, accessible language, warm low-pressure CTAs ('Join us,' 'Experience it live,' 'Perfect for first-time guests')\n• Biggest barrier: 'opera isn't for me' — messaging must reduce intimidation and lead with the experience, not the institution\n• Strategic role: Growth audience — where new ticket buyers and long-term audience development begins",
       },
@@ -58,6 +67,7 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "go-donors",
         name: "Donors / Philanthropic Supporters",
+        type: "Consumer",
         audience:
           "• Affluent to high-net-worth adults 55+, civic leaders, philanthropic households, board-connected and socially influential — concentrated in Naples, Marco Island, Bonita Springs, and luxury communities\n• Relationship with GO is defined by giving, not just attendance — major donors, Maestro Club members, gala supporters, annual fund contributors, prospective philanthropists\n• Motivated by mission impact, legacy, cultural stewardship, regional pride, and insider access — not ticket sales\n• Key touchpoints: personalized invitations, donor dinners, gala collateral, impact reports, sponsorship decks, one-to-one outreach\n• Respond to: evidence of growth and excellence, leadership trust, recognition, exclusivity, and clear articulation of community benefit\n• Biggest barrier: messaging that feels transactional or ticket-focused — requires stewardship, not promotion\n• Strategic role: Funding audience — essential to financial sustainability, mission advancement, and long-term institutional growth",
       },
@@ -65,6 +75,7 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "go-community-partners",
         name: "Community Partners / Institutional Stakeholders",
+        type: "Institutional",
         audience:
           "• Not a consumer segment — organizations, businesses, funders, media, and civic institutions; represented by marketing directors, executives, development leads, venue teams, and cultural administrators\n• Supports GO through sponsorship, hosting, venue access, media partnership, grantmaking, tourism promotion, or community alignment\n• Motivated by brand alignment, shared visibility, audience reach, regional credibility, and measurable community impact\n• Key touchpoints: sponsorship decks, grant applications, partner presentations, recognition materials, corporate email outreach\n• Respond to: GO's professionalism, strong branding, clear audience quality data, regional footprint, and documented outcomes\n• Biggest barrier: weak partnership presentation, unclear ROI, or inconsistent brand — requires polished, outcome-oriented materials\n• Strategic role: Stakeholder audience — crucial for funding, credibility, venue access, tourism alignment, and institutional growth",
       },
@@ -72,6 +83,7 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "go-community-education",
         name: "Community / Education / Access Participants",
+        type: "Institutional",
         audience:
           "• Children, teens, families, emerging artists, and early-career singers connected to GO through outreach and education — not traditional ticket buyers; diverse backgrounds across SWFL including underserved communities\n• Connected through Harmony Choir, youth programs, artist-development initiatives, and partner organizations\n• Motivated by access, belonging, musical growth, mentorship, and opportunity — not repertoire or event attendance\n• Key touchpoints: partner organizations, community outreach, grant reports, mission storytelling, impact pages, local nonprofit networks\n• Central to GO's grants, impact narrative, and community trust — helps define GO as a community-centered organization, not only a presenter\n• Biggest barrier: cost, transportation, awareness, and the perception that opera isn't for them\n• Strategic role: Mission audience — central to grants, impact storytelling, community trust, and long-term audience and artist development",
       },

@@ -196,7 +196,7 @@ export function buildBriefDocx(brief: BriefData): Document {
     if (brief.venue) meta.push(["Venue", brief.venue]);
   }
   const secondaryCampaign = client?.campaigns.find((c) => c.id === brief.secondaryCampaignId);
-  if (campaign) meta.push(["Campaign", [campaign.name, secondaryCampaign?.name].filter(Boolean).join(" + ")]);
+  if (campaign) meta.push(["Segment", [campaign.name, secondaryCampaign?.name].filter(Boolean).join(" + ")]);
   if (brief.reviewMeeting) meta.push(["Review meeting", brief.reviewMeeting]);
   meta.push(["Status", brief.status || "Draft for review"]);
   children.push(metaTable(meta));

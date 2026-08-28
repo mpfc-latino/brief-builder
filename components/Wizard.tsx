@@ -278,7 +278,7 @@ export default function Wizard({
   // The brief so far — passed to every AI draft so sections stay coherent + on-brief.
   const aiContext: Record<string, string | undefined> = {
     Project: brief.projectName,
-    Campaign: [
+    Segment: [
       client.campaigns.find((c) => c.id === brief.campaignId)?.name,
       client.campaigns.find((c) => c.id === brief.secondaryCampaignId)?.name,
     ].filter(Boolean).join(" + ") || undefined,
@@ -503,14 +503,15 @@ export default function Wizard({
               )}
 
               <div>
-                <Label hint="Optional. Pick a campaign to auto-fill the audience, or leave blank for a standalone piece.">
-                  Primary Campaign
+                <Label hint="Optional. Pick the audience segment this deliverable targets to auto-fill the audience, or leave blank for a standalone piece.">
+                  Primary Audience Segment
                 </Label>
                 <Select value={brief.campaignId ?? ""} onChange={(e) => selectCampaign(e.target.value)}>
                   <option value="">— None (standalone) —</option>
                   {client.campaigns.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
+                      {c.type === "Institutional" ? " · Institutional" : ""}
                     </option>
                   ))}
                 </Select>
@@ -518,8 +519,8 @@ export default function Wizard({
 
               {client.campaigns.length > 0 && (
                 <div>
-                  <Label hint="Optional. Add a secondary audience when this deliverable targets two segments.">
-                    Secondary Campaign
+                  <Label hint="Optional. Add a secondary segment when this deliverable targets two audiences.">
+                    Secondary Audience Segment
                   </Label>
                   <Select value={brief.secondaryCampaignId ?? ""} onChange={(e) => selectSecondaryCampaign(e.target.value)}>
                     <option value="">— None —</option>
@@ -528,6 +529,7 @@ export default function Wizard({
                       .map((c) => (
                         <option key={c.id} value={c.id}>
                           {c.name}
+                          {c.type === "Institutional" ? " · Institutional" : ""}
                         </option>
                       ))}
                   </Select>
@@ -559,14 +561,14 @@ export default function Wizard({
           {current.id === "audience" && (
             <div className="space-y-6">
               <div className="space-y-3">
-                <Label hint={brief.campaignId ? "Pre-filled from the selected campaign — edit as needed." : "Pre-filled from the client profile — edit as needed."}>
+                <Label hint={brief.campaignId ? "Pre-filled from the selected segment — edit as needed." : "Pre-filled from the client profile — edit as needed."}>
                   {brief.secondaryCampaignId ? "Primary audience" : "Target audience"}
                 </Label>
                 <TextArea rows={7} value={brief.audience} onChange={(e) => set("audience", e.target.value)} />
               </div>
               {brief.secondaryCampaignId && (
                 <div className="space-y-3">
-                  <Label hint="Pre-filled from the secondary campaign — edit as needed.">
+                  <Label hint="Pre-filled from the secondary segment — edit as needed.">
                     Secondary audience
                   </Label>
                   <TextArea rows={7} value={brief.secondaryAudience ?? ""} onChange={(e) => set("secondaryAudience", e.target.value)} />

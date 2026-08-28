@@ -23,6 +23,9 @@ export interface Campaign {
   id: string;
   name: string;
   audience: string; // pre-fills the Audience step when selected
+  /** Consumer segments buy/attend/give; institutional segments are organizations
+   *  served through partnership/grant/mission materials, not ticket sales. */
+  type?: "Consumer" | "Institutional";
 }
 
 export interface ClientProfile {
