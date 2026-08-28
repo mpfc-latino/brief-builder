@@ -50,23 +50,23 @@ function styleFor(client: ClientProfile | undefined): DocStyle {
 // Heading/body/list builders, bound to a per-client style.
 function makeHelpers(s: DocStyle) {
   const h1 = (text: string) =>
-    new Paragraph({ spacing: { after: 80 }, children: [new TextRun({ text, bold: true, size: 40, font: s.heading, color: s.accent })] });
+    new Paragraph({ spacing: { after: 80 }, children: [new TextRun({ text, bold: true, size: 42, font: s.heading, color: s.accent })] });
 
   const h2 = (text: string) =>
     new Paragraph({
       spacing: { before: 240, after: 80 },
       heading: HeadingLevel.HEADING_2,
-      children: [new TextRun({ text, bold: true, size: 26, font: s.heading, color: s.accent })],
+      children: [new TextRun({ text, bold: true, size: 28, font: s.heading, color: s.accent })],
     });
 
   const h3 = (text: string) =>
-    new Paragraph({ spacing: { before: 140, after: 40 }, children: [new TextRun({ text, bold: true, size: 22, font: s.body, color: s.accent })] });
+    new Paragraph({ spacing: { before: 140, after: 40 }, children: [new TextRun({ text, bold: true, size: 24, font: s.body, color: s.accent })] });
 
   const body = (text: string) =>
     text
       .split(/\n\s*\n/)
       .filter((p) => p.trim())
-      .map((p) => new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: p.trim(), size: 21, font: s.body })] }));
+      .map((p) => new Paragraph({ spacing: { after: 120 }, children: [new TextRun({ text: p.trim(), size: 23, font: s.body })] }));
 
   // Splits on explicit "•"/"*" bullet markers. A line with no marker is a
   // wrapped continuation of the previous bullet (common with pasted text),
@@ -95,7 +95,7 @@ function makeHelpers(s: DocStyle) {
 
     return items
       .filter(Boolean)
-      .map((item) => new Paragraph({ bullet: { level: 0 }, spacing: { after: 40 }, children: [new TextRun({ text: item, size: 21, font: s.body })] }));
+      .map((item) => new Paragraph({ bullet: { level: 0 }, spacing: { after: 40 }, children: [new TextRun({ text: item, size: 23, font: s.body })] }));
   };
 
   const metaTable = (rows: [string, string][]) =>
@@ -117,11 +117,11 @@ function makeHelpers(s: DocStyle) {
             children: [
               new TableCell({
                 width: { size: COL_LABEL, type: WidthType.DXA },
-                children: [new Paragraph({ children: [new TextRun({ text: k, bold: true, size: 20, font: s.body, color: s.accent })] })],
+                children: [new Paragraph({ children: [new TextRun({ text: k, bold: true, size: 22, font: s.body, color: s.accent })] })],
               }),
               new TableCell({
                 width: { size: COL_VALUE, type: WidthType.DXA },
-                children: [new Paragraph({ children: [new TextRun({ text: v, size: 20, font: s.body })] })],
+                children: [new Paragraph({ children: [new TextRun({ text: v, size: 22, font: s.body })] })],
               }),
             ],
           })
@@ -141,7 +141,7 @@ function makeHelpers(s: DocStyle) {
               width: { size: colW, type: WidthType.DXA },
               children: [
                 new Paragraph({
-                  children: [new TextRun({ text, bold, size: 20, font: s.body, color: bold ? s.accent : undefined })],
+                  children: [new TextRun({ text, bold, size: 22, font: s.body, color: bold ? s.accent : undefined })],
                 }),
               ],
             })
@@ -185,7 +185,7 @@ export function buildBriefDocx(brief: BriefData): Document {
   children.push(
     new Paragraph({
       spacing: { after: 200 },
-      children: [new TextRun({ text: client?.name ?? "", italics: true, size: 22, font: s.body, color: "6B7280" })],
+      children: [new TextRun({ text: client?.name ?? "", italics: true, size: 24, font: s.body, color: s.accent })],
     })
   );
 
@@ -364,8 +364,8 @@ export function buildBriefDocx(brief: BriefData): Document {
           new Paragraph({
             spacing: { after: 40 },
             children: [
-              new TextRun({ text: `${a.file} `, bold: true, size: 21, font: s.body }),
-              new TextRun({ text: a.link ? `— ${a.link}` : "", italics: true, size: 21, font: s.body, color: "6B7280" }),
+              new TextRun({ text: `${a.file} `, bold: true, size: 23, font: s.body }),
+              new TextRun({ text: a.link ? `— ${a.link}` : "", italics: true, size: 23, font: s.body, color: "6B7280" }),
             ],
           })
         );
@@ -472,13 +472,13 @@ export function buildBriefDocx(brief: BriefData): Document {
             new Paragraph({
               spacing: { before: 80, after: 20 },
               children: [
-                new TextRun({ text: sz.label, bold: true, size: 21, font: s.body, color: s.accent }),
-                ...(sz.note ? [new TextRun({ text: `  — ${sz.note}`, size: 18, italics: true, color: "6B7280", font: s.body })] : []),
+                new TextRun({ text: sz.label, bold: true, size: 23, font: s.body, color: s.accent }),
+                ...(sz.note ? [new TextRun({ text: `  — ${sz.note}`, size: 20, italics: true, color: "6B7280", font: s.body })] : []),
               ],
             })
           );
           for (const f of filesForSize(sz, variantIds, filePrefix)) {
-            children.push(new Paragraph({ bullet: { level: 0 }, spacing: { after: 20 }, children: [new TextRun({ text: f, size: 20, font: s.body })] }));
+            children.push(new Paragraph({ bullet: { level: 0 }, spacing: { after: 20 }, children: [new TextRun({ text: f, size: 22, font: s.body })] }));
           }
         } else {
           // Standard size: one bullet, label + spec note.
@@ -487,8 +487,8 @@ export function buildBriefDocx(brief: BriefData): Document {
               bullet: { level: 0 },
               spacing: { after: 30 },
               children: [
-                new TextRun({ text: sz.label, size: 21, font: s.body }),
-                ...(sz.note ? [new TextRun({ text: `  — ${sz.note}`, size: 18, italics: true, color: "6B7280", font: s.body })] : []),
+                new TextRun({ text: sz.label, size: 23, font: s.body }),
+                ...(sz.note ? [new TextRun({ text: `  — ${sz.note}`, size: 20, italics: true, color: "6B7280", font: s.body })] : []),
               ],
             })
           );
@@ -510,7 +510,7 @@ export function buildBriefDocx(brief: BriefData): Document {
     new Paragraph({
       spacing: { before: 320 },
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: "Generated with Brief Builder — Latinovation", size: 16, font: s.body, color: "9CA3AF" })],
+      children: [new TextRun({ text: "Generated with Brief Builder — Latinovation", size: 18, font: s.body, color: "9CA3AF" })],
     })
   );
 
