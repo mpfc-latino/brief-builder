@@ -210,12 +210,15 @@ export function buildBriefDocx(brief: BriefData): Document {
   // Audience
   if (brief.audience || brief.secondaryAudience) {
     children.push(h2("Target Audience"));
+    // Name the chosen segment beside the subtitle, e.g. "Primary – Grand Opera / Opera Lovers".
+    const withSegment = (label: string, name?: string) =>
+      name ? `${label} – ${name}` : label;
     if (brief.audience) {
-      children.push(h3("Primary"));
+      children.push(h3(withSegment("Primary", campaign?.name)));
       children.push(...bullets(brief.audience));
     }
     if (brief.secondaryAudience) {
-      children.push(h3("Secondary"));
+      children.push(h3(withSegment("Secondary", secondaryCampaign?.name)));
       children.push(...bullets(brief.secondaryAudience));
     }
   }
