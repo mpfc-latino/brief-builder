@@ -20,6 +20,31 @@ const RichText = dynamic(() => import("./RichText"), {
 const DEFAULT_STORY_FLOW =
   "Context / Introduction → Detail Discovery → Technical Explanation → Proof / Process → Result / Outcome";
 
+const DIGITAL_CAMPAIGN_STRATEGY_ID = "00f85baa-f136-4ee4-91fa-ad3898907c30";
+
+// Boilerplate that repeats near-verbatim across past GO digital campaign briefs —
+// pre-seeded so it isn't retyped every time; fully editable per brief.
+const DEFAULT_BRAND_SAFETY =
+  "• Inventory filter: start with Standard (GARM-aligned); use Limited for the most conservative brand-safe delivery; avoid Expanded.\n" +
+  "• Placements: prioritize Reels/Stories/Feeds; if caution is high, exclude Audience Network and Instant Articles.\n" +
+  "• Topic exclusions (In-Stream, where available): exclude news/politics/tragedy/conflict to keep an arts-focused environment.\n" +
+  "• Publisher controls: use allow lists (preferred) or upload a block list for in-stream/Instant Articles/Audience Network.\n" +
+  "• Third-party verification: enable IAS/DoubleVerify brand-safety & viewability, if available in the stack.\n" +
+  "• Comments moderation: turn on profanity filter + page keyword block list; hide/limit comments on retargeting ads if needed.\n" +
+  "• Creative compliance: warm, non-sensational copy; no unverifiable superlatives; include any footage credit if required.";
+const DEFAULT_META_TRACKING =
+  "• Pixel events: ViewContent, AddToCart, InitiateCheckout, Purchase (prioritize Purchase in AEM).\n" +
+  "• Attribution: 7-day click, 1-day view.\n" +
+  "• Creative rotations: even for the first 7 days, then let the platform optimize.\n" +
+  "• Retargeting windows: 7-day (hot audiences), 20–30-day (warm audiences).\n" +
+  "• Primary KPI: purchases. Secondary KPI: CTR, landing page engagement, add-to-cart events.\n" +
+  "• Use audience exclusions to keep prospecting and retargeting clean.";
+const DEFAULT_BIDDING_MEASUREMENT =
+  "• Strategy: Maximize Conversions; set Target CPA if enough historical event data exists.\n" +
+  "• Conversion tracking: Google Tag + event conversion actions on the ticketing page, optimizing on Purchase/Completed Transaction.\n" +
+  "• Review search terms regularly and add negative keywords.\n" +
+  "• Monitor device / geo performance.";
+
 const emptySlide = (): SlideUnit => ({ title: "", visual: "", onImageText: "", proof: "", purpose: "" });
 const emptyOwnershipRow = (): OwnershipRow => ({ weOwn: "", theyOwn: "" });
 const emptyModule = (): PageModule => ({
@@ -129,6 +154,30 @@ export default function Wizard({
       pageModules: [emptyModule()],
       userFlows: [emptyFlow()],
       ownershipIntake: "",
+      // digital campaign strategy — Meta + Google Display
+      messagingThemes: "",
+      placements: "",
+      flightDates: "",
+      shortHeadlines: "",
+      longHeadlines: "",
+      metaDescriptions: "",
+      metaCta: "",
+      metaFinalUrl: "",
+      displayFinalUrl: "",
+      brandSafety: creativeType.id === DIGITAL_CAMPAIGN_STRATEGY_ID ? DEFAULT_BRAND_SAFETY : "",
+      metaTrackingNotes: creativeType.id === DIGITAL_CAMPAIGN_STRATEGY_ID ? DEFAULT_META_TRACKING : "",
+      // digital campaign strategy — Google Search
+      searchObjective: "",
+      searchAudienceGeo: "",
+      singleMindedMessage: "",
+      reasonsToBelieve: "",
+      adGroups: "",
+      searchKeywords: "",
+      rsaHeadlines: "",
+      rsaDescriptions: "",
+      searchFinalUrl: "",
+      extensions: "",
+      biddingMeasurement: creativeType.id === DIGITAL_CAMPAIGN_STRATEGY_ID ? DEFAULT_BIDDING_MEASUREMENT : "",
       status: "Draft for review",
     }
   );
@@ -321,8 +370,32 @@ export default function Wizard({
       channels: has("channelsMessaging") ? brief.channels : "",
       pillars: has("channelsMessaging") ? brief.pillars : "",
       cadence: has("cadenceKpis") ? brief.cadence : "",
-      kpis: has("cadenceKpis") ? brief.kpis : "",
-      budget: has("cadenceKpis") && cfg.budget ? brief.budget : "",
+      kpis: has("cadenceKpis") || cfg.kpis ? brief.kpis : "",
+      budget: (has("cadenceKpis") || has("metaPlacements")) && cfg.budget ? brief.budget : "",
+      // digital campaign strategy — Meta + Google Display
+      messagingThemes: has("messagingThemes") ? brief.messagingThemes : "",
+      placements: has("metaPlacements") ? brief.placements : "",
+      flightDates: has("metaPlacements") ? brief.flightDates : "",
+      shortHeadlines: has("metaCopy") ? brief.shortHeadlines : "",
+      longHeadlines: has("metaCopy") ? brief.longHeadlines : "",
+      metaDescriptions: has("metaCopy") ? brief.metaDescriptions : "",
+      metaCta: has("metaCopy") ? brief.metaCta : "",
+      metaFinalUrl: has("metaTracking") ? brief.metaFinalUrl : "",
+      displayFinalUrl: has("metaTracking") ? brief.displayFinalUrl : "",
+      brandSafety: has("metaTracking") ? brief.brandSafety : "",
+      metaTrackingNotes: has("metaTracking") ? brief.metaTrackingNotes : "",
+      // digital campaign strategy — Google Search
+      searchObjective: has("searchObjective") ? brief.searchObjective : "",
+      searchAudienceGeo: has("searchObjective") ? brief.searchAudienceGeo : "",
+      singleMindedMessage: has("searchMessage") ? brief.singleMindedMessage : "",
+      reasonsToBelieve: has("searchMessage") ? brief.reasonsToBelieve : "",
+      adGroups: has("searchStructure") ? brief.adGroups : "",
+      searchKeywords: has("searchStructure") ? brief.searchKeywords : "",
+      rsaHeadlines: has("searchAssets") ? brief.rsaHeadlines : "",
+      rsaDescriptions: has("searchAssets") ? brief.rsaDescriptions : "",
+      searchFinalUrl: has("searchExtensions") ? brief.searchFinalUrl : "",
+      extensions: has("searchExtensions") ? brief.extensions : "",
+      biddingMeasurement: has("searchExtensions") ? brief.biddingMeasurement : "",
       // advertising
       keyMessages: has("keyMessages") ? brief.keyMessages : "",
       smp: has("smp") ? brief.smp : "",
@@ -544,27 +617,39 @@ export default function Wizard({
           )}
 
           {current.id === "objective" && (
-            <AiField
-              label="Objective"
-              hint="What this is for, where it runs, and how it must align + stand apart."
-              section="objective"
-              value={brief.objective}
-              onChange={(v) => set("objective", v)}
-              clientName={client.name}
-              creativeTypeName={creativeType.short}
-              brandContext={brandContext}
-              context={aiContext}
-              rows={6}
-            />
+            <div className="space-y-5">
+              <AiField
+                label="Objective"
+                hint={cfg.kpis
+                  ? "Event-specific, not generic — what the campaign needs to achieve (ticket sales + awareness, location-specific awareness, urgency/BOGO/last-chance)."
+                  : "What this is for, where it runs, and how it must align + stand apart."}
+                section="objective"
+                value={brief.objective}
+                onChange={(v) => set("objective", v)}
+                clientName={client.name}
+                creativeTypeName={creativeType.short}
+                brandContext={brandContext}
+                context={aiContext}
+                rows={6}
+              />
+              {cfg.kpis && (
+                <div>
+                  <Label hint="One per line. E.g. ticket purchases, CTR, CPC, CPA, ROAS, website sessions, conversion events.">
+                    KPIs
+                  </Label>
+                  <TextArea rows={4} value={brief.kpis ?? ""} onChange={(e) => set("kpis", e.target.value)} />
+                </div>
+              )}
+            </div>
           )}
 
           {current.id === "audience" && (
             <div className="space-y-6">
               <div className="space-y-3">
-                <Label hint={brief.campaignId ? "Pre-filled from the selected segment — edit as needed." : "Pre-filled from the client profile — edit as needed."}>
+                <Label hint={cfg.audienceHint ?? (brief.campaignId ? "Pre-filled from the selected segment — edit as needed." : "Pre-filled from the client profile — edit as needed.")}>
                   {brief.secondaryCampaignId ? "Primary audience" : "Target audience"}
                 </Label>
-                <TextArea rows={7} value={brief.audience} onChange={(e) => set("audience", e.target.value)} />
+                <TextArea rows={cfg.kpis ? 12 : 7} value={brief.audience} onChange={(e) => set("audience", e.target.value)} />
               </div>
               {brief.secondaryCampaignId && (
                 <div className="space-y-3">
@@ -777,6 +862,198 @@ export default function Wizard({
                   <Label>Platform(s)</Label>
                   <TextInput value={brief.platform ?? ""} onChange={(e) => set("platform", e.target.value)} placeholder="Instagram + LinkedIn" />
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Digital Campaign Strategy · Part 1 (Meta + Google Display) ── */}
+
+          {current.id === "messagingThemes" && (
+            <div className="space-y-3">
+              <Label hint="3–4 distinct angles to rotate & test. Each should give a different reason to click — star power, repertoire, one-night-only urgency, venue prestige, romantic night out, social experience, last chance, etc.">
+                Messaging themes
+              </Label>
+              <TextArea
+                rows={10}
+                value={brief.messagingThemes ?? ""}
+                onChange={(e) => set("messagingThemes", e.target.value)}
+                placeholder={"One Night Only in [City]: last chance to see...\nStar Power: [Artist] returns in [role]...\nEmotional Story: the powerful [theme] and unforgettable music..."}
+              />
+            </div>
+          )}
+
+          {current.id === "metaPlacements" && (
+            <div className="space-y-5">
+              <div>
+                <Label hint="Channels/placements for Meta (Feed, Stories, Reels) and Google Display (responsive & static banners), plus targeting split if relevant (e.g. cold/retargeting/engagement).">
+                  Placements
+                </Label>
+                <TextArea rows={4} value={brief.placements ?? ""} onChange={(e) => set("placements", e.target.value)} placeholder={"Facebook & Instagram (Feed, Reels, Stories)\nGoogle Display Network (responsive & static banners), retargeting + contextual"} />
+              </div>
+              <div>
+                <Label hint="Flight window, with a note on ramping up spend in the final 7–14 days before the event.">Flight dates</Label>
+                <TextInput value={brief.flightDates ?? ""} onChange={(e) => set("flightDates", e.target.value)} placeholder="Mar 12 – Mar 26, 2026 (ramp up in final 7 days)" />
+              </div>
+              <div>
+                <Label hint="Total + split, e.g. '$890 total — 60% Meta / 40% Google Display.'">Budget & split</Label>
+                <TextArea rows={2} value={brief.budget ?? ""} onChange={(e) => set("budget", e.target.value)} />
+              </div>
+            </div>
+          )}
+
+          {current.id === "metaCopy" && (
+            <div className="space-y-5">
+              <div>
+                <Label hint="≤30 characters each, one per line. Don't repeat the event title if the Key Visual already shows it prominently — lead with date, location, star, urgency, or repertoire instead.">
+                  Short headlines
+                </Label>
+                <TextArea rows={4} value={brief.shortHeadlines ?? ""} onChange={(e) => set("shortHeadlines", e.target.value)} placeholder={"One Night Only in Naples\nFeb 6: Live Music on Marco\nLast Chance in Punta Gorda"} />
+              </div>
+              <div>
+                <Label hint="Up to ~90 characters, used when space allows. More descriptive and emotional.">Long headlines</Label>
+                <TextArea rows={3} value={brief.longHeadlines ?? ""} onChange={(e) => set("longHeadlines", e.target.value)} />
+              </div>
+              <AiField
+                label="Descriptions (Meta-style copy)"
+                hint="3 longer post-style descriptions, not just 90-character ad copy. Structure: emotional hook → what it is → why it's special → artist/repertoire/venue detail → date + location → CTA. Tasteful emojis OK, sparingly (🎶🎭🥂💕📍🗓️🎟️)."
+                section="metaDescriptions"
+                value={brief.metaDescriptions ?? ""}
+                onChange={(v) => set("metaDescriptions", v)}
+                clientName={client.name}
+                creativeTypeName={creativeType.short}
+                brandContext={brandContext}
+                context={aiContext}
+                rows={8}
+              />
+              <div>
+                <Label hint="e.g. Get Tickets, Buy Tickets, Reserve Your Seats, Learn More.">CTA button</Label>
+                <TextInput value={brief.metaCta ?? ""} onChange={(e) => set("metaCta", e.target.value)} placeholder="Get Tickets" />
+              </div>
+            </div>
+          )}
+
+          {current.id === "metaTracking" && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label hint="Full URL incl. UTM string.">Meta final URL</Label>
+                  <TextInput value={brief.metaFinalUrl ?? ""} onChange={(e) => set("metaFinalUrl", e.target.value)} placeholder="https://…?utm_source=digital+ad&utm_medium=meta&utm_campaign=…" />
+                </div>
+                <div>
+                  <Label hint="Full URL incl. UTM string.">Google Display final URL</Label>
+                  <TextInput value={brief.displayFinalUrl ?? ""} onChange={(e) => set("displayFinalUrl", e.target.value)} placeholder="https://…?utm_source=digital+ad&utm_medium=display&utm_campaign=…" />
+                </div>
+              </div>
+              <div>
+                <Label hint="Inventory filter, placement caution, topic exclusions, publisher controls, 3rd-party verification, comments moderation, creative compliance.">
+                  Brand safety
+                </Label>
+                <TextArea rows={8} value={brief.brandSafety ?? ""} onChange={(e) => set("brandSafety", e.target.value)} />
+              </div>
+              <div>
+                <Label hint="Pixel events, attribution window, creative rotation, retargeting windows, primary/secondary KPI.">
+                  Tracking & measurement
+                </Label>
+                <TextArea rows={7} value={brief.metaTrackingNotes ?? ""} onChange={(e) => set("metaTrackingNotes", e.target.value)} />
+              </div>
+            </div>
+          )}
+
+          {/* ── Digital Campaign Strategy · Part 2 (Google Search) ── */}
+
+          {current.id === "searchObjective" && (
+            <div className="space-y-5">
+              <AiField
+                label="Search objective"
+                hint="Drive ticket sales from high-intent searches; capture event-specific, venue-specific, and local entertainment searches."
+                section="searchObjective"
+                value={brief.searchObjective ?? ""}
+                onChange={(v) => set("searchObjective", v)}
+                clientName={client.name}
+                creativeTypeName={creativeType.short}
+                brandContext={brandContext}
+                context={aiContext}
+                rows={4}
+              />
+              <div>
+                <Label hint="Demographic + geography + behavior. Include geo-targeting center/radius (e.g. ~25–30 miles around the venue).">
+                  Primary audience & geo
+                </Label>
+                <TextArea rows={8} value={brief.searchAudienceGeo ?? ""} onChange={(e) => set("searchAudienceGeo", e.target.value)} placeholder={"Adults 50+ in [County]\nOpera and cultural event seekers\nLocal residents and seasonal visitors\nGeo: center [venue], radius ~25–30 miles"} />
+              </div>
+            </div>
+          )}
+
+          {current.id === "searchMessage" && (
+            <div className="space-y-5">
+              <AiField
+                label="Single-minded message"
+                hint="One simple statement that defines what the search campaign should communicate."
+                section="singleMindedMessage"
+                value={brief.singleMindedMessage ?? ""}
+                onChange={(v) => set("singleMindedMessage", v)}
+                clientName={client.name}
+                creativeTypeName={creativeType.short}
+                brandContext={brandContext}
+                context={aiContext}
+                rows={3}
+              />
+              <div>
+                <Label hint="3–4 bullets: famous repertoire, star artist, prestigious venue, one-night-only, accessible location, recognizable songs.">
+                  Reasons to believe
+                </Label>
+                <TextArea rows={5} value={brief.reasonsToBelieve ?? ""} onChange={(e) => set("reasonsToBelieve", e.target.value)} />
+              </div>
+            </div>
+          )}
+
+          {current.id === "searchStructure" && (
+            <div className="space-y-5">
+              <div>
+                <Label hint="Campaign name, then ad groups (branded, event-specific, local/interest, tickets/intent, last chance) with the focus of each.">
+                  Campaign structure / ad groups
+                </Label>
+                <TextArea rows={9} value={brief.adGroups ?? ""} onChange={(e) => set("adGroups", e.target.value)} placeholder={"Campaign: GO – [Event] – [City] – Search\nAd Group 1 – Event / Branded — Focus: “[Event] tickets,” “Gulfshore Opera [event]”\nAd Group 2 – Local Opera & Concerts — Focus: “opera [city],” “things to do [city]”\nAd Group 3 – Last Chance / Tickets — Focus: “buy [event] tickets”"} />
+              </div>
+              <div>
+                <Label hint="Grouped starter list (branded, event-specific, local, interest-based, ticket intent) + match types (exact / phrase).">
+                  Keywords
+                </Label>
+                <TextArea rows={9} value={brief.searchKeywords ?? ""} onChange={(e) => set("searchKeywords", e.target.value)} placeholder={"Match types: mix of [exact match] and \"phrase match\"\nBranded: [gulfshore opera tickets]\nEvent-specific: [event name + city]\nInterest-based: \"opera concerts [city]\"\nTicket intent: \"buy opera tickets\""} />
+              </div>
+            </div>
+          )}
+
+          {current.id === "searchAssets" && (
+            <div className="space-y-5">
+              <div>
+                <Label hint="Up to 15 options, ~30 characters. Include event name, location, date, artist, ticket intent, one-night-only language.">
+                  RSA headlines
+                </Label>
+                <TextArea rows={10} value={brief.rsaHeadlines ?? ""} onChange={(e) => set("rsaHeadlines", e.target.value)} />
+              </div>
+              <div>
+                <Label hint="4–6 options, up to 90 characters. Clear, direct, conversion-focused.">RSA descriptions</Label>
+                <TextArea rows={6} value={brief.rsaDescriptions ?? ""} onChange={(e) => set("rsaDescriptions", e.target.value)} />
+              </div>
+            </div>
+          )}
+
+          {current.id === "searchExtensions" && (
+            <div className="space-y-5">
+              <div>
+                <Label hint="Final URL + display path.">Final URL & path</Label>
+                <TextInput value={brief.searchFinalUrl ?? ""} onChange={(e) => set("searchFinalUrl", e.target.value)} placeholder="gulfshoreopera.org/event-name/city" />
+              </div>
+              <div>
+                <Label hint="Callouts, sitelinks, and structured snippets (header + items).">Extensions</Label>
+                <TextArea rows={8} value={brief.extensions ?? ""} onChange={(e) => set("extensions", e.target.value)} placeholder={"Callouts: One Night Only · Limited Seating · [Star] Artist · Live in [City]\nSitelinks: Buy Tickets · View Season · Meet the Artists · About Gulfshore Opera\nStructured snippets — Repertoire: …; Venues: …"} />
+              </div>
+              <div>
+                <Label hint="Bid strategy, conversion tracking, budget/day, goal CTR, negative keywords, device/geo monitoring.">
+                  Bidding & measurement
+                </Label>
+                <TextArea rows={6} value={brief.biddingMeasurement ?? ""} onChange={(e) => set("biddingMeasurement", e.target.value)} />
               </div>
             </div>
           )}
@@ -1233,6 +1510,30 @@ function Review({
         {row("Objective", brief.objective)}
         {row(brief.secondaryAudience ? "Primary audience" : "Audience", brief.audience)}
         {brief.secondaryAudience && row("Secondary audience", brief.secondaryAudience)}
+        {cfg.kpis && row("KPIs", brief.kpis)}
+        {has("messagingThemes") && row("Messaging themes", brief.messagingThemes)}
+        {has("metaPlacements") && row("Placements", brief.placements)}
+        {has("metaPlacements") && row("Flight dates", brief.flightDates)}
+        {has("metaPlacements") && cfg.budget && row("Budget & split", brief.budget)}
+        {has("metaCopy") && row("Short headlines", brief.shortHeadlines)}
+        {has("metaCopy") && row("Long headlines", brief.longHeadlines)}
+        {has("metaCopy") && row("Descriptions", brief.metaDescriptions)}
+        {has("metaCopy") && row("CTA button", brief.metaCta)}
+        {has("metaTracking") && row("Meta final URL", brief.metaFinalUrl)}
+        {has("metaTracking") && row("Display final URL", brief.displayFinalUrl)}
+        {has("metaTracking") && row("Brand safety", brief.brandSafety)}
+        {has("metaTracking") && row("Tracking & measurement", brief.metaTrackingNotes)}
+        {has("searchObjective") && row("Search objective", brief.searchObjective)}
+        {has("searchObjective") && row("Search: primary audience & geo", brief.searchAudienceGeo)}
+        {has("searchMessage") && row("Single-minded message", brief.singleMindedMessage)}
+        {has("searchMessage") && row("Reasons to believe", brief.reasonsToBelieve)}
+        {has("searchStructure") && row("Campaign structure / ad groups", brief.adGroups)}
+        {has("searchStructure") && row("Keywords", brief.searchKeywords)}
+        {has("searchAssets") && row("RSA headlines", brief.rsaHeadlines)}
+        {has("searchAssets") && row("RSA descriptions", brief.rsaDescriptions)}
+        {has("searchExtensions") && row("Search final URL & path", brief.searchFinalUrl)}
+        {has("searchExtensions") && row("Extensions", brief.extensions)}
+        {has("searchExtensions") && row("Bidding & measurement", brief.biddingMeasurement)}
         {has("scope") && row("In scope", brief.scopeIncluded)}
         {has("scope") && row("Out of scope / future phases", brief.scopeExcluded)}
         {has("ownership") && row("Governing principle", brief.governingPrinciple)}

@@ -18,6 +18,8 @@ import { getSize, filesForSize } from "./sizes";
 import { getWizardConfig } from "./sections";
 import { htmlToDocx, htmlHasText } from "./htmlToDocx";
 
+const DIGITAL_CAMPAIGN_STRATEGY_ID = "00f85baa-f136-4ee4-91fa-ad3898907c30";
+
 // Pure docx assembly for a brief — no I/O. Shared by the download route
 // (/api/generate) and the Drive save route (/api/save). Styled PER CLIENT:
 // fonts + accent color come from the client's brand profile.
@@ -173,6 +175,7 @@ export function buildBriefDocx(brief: BriefData): Document {
   const cfg = ctype ? getWizardConfig(ctype) : null;
   const campaign = client?.campaigns.find((c) => c.id === brief.campaignId);
   const sizes = (brief.sizeIds || []).map((id) => getSize(id)).filter(Boolean);
+  const isDigitalCampaignStrategy = ctype?.id === DIGITAL_CAMPAIGN_STRATEGY_ID;
 
   const s = styleFor(client);
   const { h1, h2, h3, body, bullets, metaTable, dataTable } = makeHelpers(s);
@@ -220,6 +223,133 @@ export function buildBriefDocx(brief: BriefData): Document {
     if (brief.secondaryAudience) {
       children.push(h3(withSegment("Secondary", secondaryCampaign?.name)));
       children.push(...bullets(brief.secondaryAudience));
+    }
+  }
+
+  // Digital Campaign Strategy — Part 1: Meta + Google Display
+  if (
+    isDigitalCampaignStrategy &&
+    (brief.kpis ||
+      brief.messagingThemes ||
+      brief.placements ||
+      brief.flightDates ||
+      brief.budget ||
+      brief.shortHeadlines ||
+      brief.longHeadlines ||
+      brief.metaDescriptions ||
+      brief.metaCta ||
+      brief.metaFinalUrl ||
+      brief.displayFinalUrl ||
+      brief.brandSafety ||
+      brief.metaTrackingNotes)
+  ) {
+    children.push(h2("Meta + Google Display — Creative & Media Brief"));
+    if (brief.kpis) {
+      children.push(h3("KPIs"));
+      children.push(...bullets(brief.kpis));
+    }
+    if (brief.messagingThemes) {
+      children.push(h3("Messaging Themes (Rotate & Test)"));
+      children.push(...bullets(brief.messagingThemes));
+    }
+    if (brief.placements || brief.flightDates || brief.budget) {
+      children.push(h3("Placements & Budgeting"));
+      if (brief.placements) children.push(...bullets(brief.placements));
+      if (brief.flightDates) children.push(...body(`Flight dates: ${brief.flightDates}`));
+      if (brief.budget) children.push(...body(brief.budget));
+    }
+    if (brief.shortHeadlines) {
+      children.push(h3("Short Headlines (≤30 characters)"));
+      children.push(...bullets(brief.shortHeadlines));
+    }
+    if (brief.longHeadlines) {
+      children.push(h3("Long Headlines (≤90 characters)"));
+      children.push(...bullets(brief.longHeadlines));
+    }
+    if (brief.metaDescriptions) {
+      children.push(h3("Descriptions"));
+      children.push(...body(brief.metaDescriptions));
+    }
+    if (brief.metaCta) {
+      children.push(h3("CTA Button"));
+      children.push(...body(brief.metaCta));
+    }
+    if (brief.metaFinalUrl || brief.displayFinalUrl) {
+      children.push(h3("Final URL"));
+      const rows: [string, string][] = [];
+      if (brief.metaFinalUrl) rows.push(["Meta", brief.metaFinalUrl]);
+      if (brief.displayFinalUrl) rows.push(["Display", brief.displayFinalUrl]);
+      children.push(metaTable(rows));
+    }
+    if (brief.brandSafety) {
+      children.push(h3("Brand Safety"));
+      children.push(...bullets(brief.brandSafety));
+    }
+    if (brief.metaTrackingNotes) {
+      children.push(h3("Tracking & Measurement"));
+      children.push(...bullets(brief.metaTrackingNotes));
+    }
+  }
+
+  // Digital Campaign Strategy — Part 2: Google Search
+  if (
+    isDigitalCampaignStrategy &&
+    (brief.searchObjective ||
+      brief.searchAudienceGeo ||
+      brief.singleMindedMessage ||
+      brief.reasonsToBelieve ||
+      brief.adGroups ||
+      brief.searchKeywords ||
+      brief.rsaHeadlines ||
+      brief.rsaDescriptions ||
+      brief.searchFinalUrl ||
+      brief.extensions ||
+      brief.biddingMeasurement)
+  ) {
+    children.push(h2("Google Search — Creative & Media Brief"));
+    if (brief.searchObjective) {
+      children.push(h3("Objective"));
+      children.push(...body(brief.searchObjective));
+    }
+    if (brief.searchAudienceGeo) {
+      children.push(h3("Primary Audience & Geo"));
+      children.push(...bullets(brief.searchAudienceGeo));
+    }
+    if (brief.singleMindedMessage) {
+      children.push(h3("Single-Minded Message"));
+      children.push(...body(brief.singleMindedMessage));
+    }
+    if (brief.reasonsToBelieve) {
+      children.push(h3("Reasons to Believe"));
+      children.push(...bullets(brief.reasonsToBelieve));
+    }
+    if (brief.adGroups) {
+      children.push(h3("Campaign Structure / Ad Groups"));
+      children.push(...bullets(brief.adGroups));
+    }
+    if (brief.searchKeywords) {
+      children.push(h3("Keywords"));
+      children.push(...bullets(brief.searchKeywords));
+    }
+    if (brief.rsaHeadlines) {
+      children.push(h3("Responsive Search Ad Headlines (up to 15, ≤30 characters)"));
+      children.push(...bullets(brief.rsaHeadlines));
+    }
+    if (brief.rsaDescriptions) {
+      children.push(h3("Responsive Search Ad Descriptions (up to 4–6, ≤90 characters)"));
+      children.push(...bullets(brief.rsaDescriptions));
+    }
+    if (brief.searchFinalUrl) {
+      children.push(h3("Final URL & Path"));
+      children.push(...body(brief.searchFinalUrl));
+    }
+    if (brief.extensions) {
+      children.push(h3("Extensions"));
+      children.push(...bullets(brief.extensions));
+    }
+    if (brief.biddingMeasurement) {
+      children.push(h3("Bidding & Measurement"));
+      children.push(...bullets(brief.biddingMeasurement));
     }
   }
 
@@ -429,16 +559,17 @@ export function buildBriefDocx(brief: BriefData): Document {
     }
   }
 
-  // Cadence / KPIs / Budget (Strategy & DM)
+  // Cadence / KPIs / Budget (Strategy & DM) — kpis/budget already rendered
+  // above under "Meta + Google Display" for Digital Campaign Strategy.
   if (brief.cadence) {
     children.push(h2("Cadence & Timeline"));
     children.push(...body(brief.cadence));
   }
-  if (brief.kpis) {
+  if (brief.kpis && !isDigitalCampaignStrategy) {
     children.push(h2("KPIs & Measurement"));
     children.push(...bullets(brief.kpis));
   }
-  if (brief.budget) {
+  if (brief.budget && !isDigitalCampaignStrategy) {
     children.push(h2("Budget"));
     children.push(...body(brief.budget));
   }

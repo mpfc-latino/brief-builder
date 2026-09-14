@@ -201,6 +201,25 @@ const TYPE_SIZES: Record<string, SizeOption[]> = {
     { id: "evite-600x800", label: "E-vite — 600×800 (max width 600)", dimensions: "600x800", category: "Email", note: "JPG · PNG · HTML" },
     { id: "evite-mobile-1080x1920", label: "Mobile / story — 1080×1920", dimensions: "1080x1920", category: "Email", note: "Shareable version" },
   ],
+
+  // Digital Campaign Strategy — Meta + Google Display + Search creative sizes.
+  // Source: GO "Creative & Media Brief" pattern (Porgy and Bess, As You Like It, Season 12–13).
+  "00f85baa-f136-4ee4-91fa-ad3898907c30": [
+    { id: "dcs-video-1080x1920", label: "Video, vertical — 1080×1920", dimensions: "1080x1920", category: "Video (Meta)", note: "MP4 · e.g. 15s video, 5s teaser with KV animation" },
+    { id: "dcs-video-5120x1080", label: "Video, panoramic — 5120×1080", dimensions: "5120x1080", category: "Video (Meta)", note: "MP4 · sometimes used" },
+    { id: "dcs-video-1920x1080-yt", label: "Video, landscape — 1920×1080 (YouTube)", dimensions: "1920x1080", category: "Video (Meta)", note: "MP4" },
+    { id: "dcs-static-1080x1920", label: "Static, vertical — 1080×1920", dimensions: "1080x1920", category: "Static (Meta)", note: "JPG" },
+    { id: "dcs-static-1080x1350", label: "Static, portrait — 1080×1350", dimensions: "1080x1350", category: "Static (Meta)", note: "JPG" },
+    { id: "dcs-static-1080x1080", label: "Static, square — 1080×1080", dimensions: "1080x1080", category: "Static (Meta)", note: "JPG" },
+    { id: "dcs-display-300x250", label: "Google Display — 300×250", dimensions: "300x250", category: "Google Display", note: "Responsive & static banner" },
+    { id: "dcs-display-300x600", label: "Google Display — 300×600", dimensions: "300x600", category: "Google Display" },
+    { id: "dcs-display-160x600", label: "Google Display — 160×600", dimensions: "160x600", category: "Google Display" },
+    { id: "dcs-display-728x90", label: "Google Display — 728×90", dimensions: "728x90", category: "Google Display" },
+    { id: "dcs-display-970x250", label: "Google Display — 970×250", dimensions: "970x250", category: "Google Display" },
+    { id: "dcs-display-336x280", label: "Google Display — 336×280", dimensions: "336x280", category: "Google Display" },
+    { id: "dcs-display-320x50", label: "Google Display — 320×50", dimensions: "320x50", category: "Google Display" },
+    { id: "dcs-display-320x100", label: "Google Display — 320×100", dimensions: "320x100", category: "Google Display" },
+  ],
 };
 
 // Client + archetype catalogs (e.g. Key Visual, which differs per client).

@@ -184,5 +184,33 @@ export interface BriefData {
   userFlows?: UserFlow[]; // input → process → output, per persona
   ownershipIntake?: string; // who owns build/maintenance, intake requests, review cadence
 
+  // ── Digital Campaign Strategy — Part 1: Meta + Google Display ──
+  // (objective/audience above double as this part's Objective & KPI / Audience
+  // Segmentation & Targeting; `kpis` and `budget` above are also shared in here.)
+  messagingThemes?: string; // 3–4 rotate-and-test angles, each a different reason to click
+  placements?: string; // channels/placements — Meta feed/stories/reels, Display responsive/static
+  flightDates?: string; // flight window, with ramp-up note
+  shortHeadlines?: string; // ≤30 chars, one per line
+  longHeadlines?: string; // ≤90 chars, used when space allows
+  metaDescriptions?: string; // 3 longer post-style descriptions (hook → what/why → detail → date/loc → CTA)
+  metaCta?: string; // CTA button copy
+  metaFinalUrl?: string; // Meta final URL incl. UTM
+  displayFinalUrl?: string; // Google Display final URL incl. UTM
+  brandSafety?: string; // inventory filter, placements, topic exclusions, publisher controls…
+  metaTrackingNotes?: string; // pixel events, attribution window, retargeting windows, primary/secondary KPI
+
+  // ── Digital Campaign Strategy — Part 2: Google Search ──
+  searchObjective?: string; // search-specific objective + single high-intent focus
+  searchAudienceGeo?: string; // demographic + geo (center/radius) + behavior
+  singleMindedMessage?: string; // one sentence the search campaign must communicate
+  reasonsToBelieve?: string; // 3–4 RTB bullets
+  adGroups?: string; // campaign name + ad group breakdown (focus per group)
+  searchKeywords?: string; // grouped starter keyword list + match types
+  rsaHeadlines?: string; // up to 15, ≤30 chars, one per line
+  rsaDescriptions?: string; // up to 4–6, ≤90 chars, one per line
+  searchFinalUrl?: string; // final URL + display path
+  extensions?: string; // callouts, sitelinks, structured snippets
+  biddingMeasurement?: string; // bid strategy, conversion tracking, budget/day, goal CTR
+
   status: string;
 }

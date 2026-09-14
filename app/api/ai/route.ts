@@ -14,7 +14,10 @@ type DraftSection =
   | "scope"
   | "principle"
   | "placement"
-  | "maintenance";
+  | "maintenance"
+  | "metaDescriptions"
+  | "searchObjective"
+  | "singleMindedMessage";
 
 interface DraftRequest {
   action: "draft";
@@ -47,6 +50,12 @@ const SECTION_GUIDE: Record<DraftSection, string> = {
     "Write the PLACEMENT & NAVIGATION section: where this page lives (URL), where it sits in primary navigation and any secondary entry points, the page type (single page vs. hub, anchored sections, accordion, etc.), and one line of rationale for that structure. Concrete and buildable, not aspirational.",
   maintenance:
     "Write the OWNERSHIP, INTAKE & MAINTENANCE section: who owns build vs. who owns it after handover, what structured information still needs to come from the client before this can be built (name each request and what it should contain), and the review cadence that keeps the content from going stale. Concrete and actionable.",
+  metaDescriptions:
+    "Write 3 Meta-style post descriptions (longer than a 90-character ad description — full post copy). Each follows: emotional hook, what the event/piece is, why it's special, artist/repertoire/venue detail, date + location, then a CTA line. Use tasteful emojis sparingly (🎶🎭🥂💕📍🗓️🎟️) only if the tone supports it — never force them. Return the 3 versions separated by a blank line, each its own short paragraph followed by the date/location and CTA on their own lines. Do not imply an artist will perform a specific piece heard only in archival footage unless confirmed in the notes.",
+  searchObjective:
+    "Write the GOOGLE SEARCH OBJECTIVE: 1–2 sentences on driving ticket sales/conversions from high-intent searches, naming the event-specific, venue-specific, or local searches this campaign should capture. Specific to this event, not generic.",
+  singleMindedMessage:
+    "Write the SINGLE-MINDED MESSAGE: one simple, complete sentence that defines exactly what the search campaign should communicate — the one thing a searcher needs to know. No fluff, no subordinate clauses stacked on top of each other.",
 };
 
 const SYSTEM_PROMPT =
@@ -104,7 +113,13 @@ function fallbackDraft(req: DraftRequest): string {
                     ? `This page lives at:`
                     : req.section === "maintenance"
                       ? `Ownership and next inputs needed:`
-                      : `For the team:`;
+                      : req.section === "metaDescriptions"
+                        ? `Description draft:`
+                        : req.section === "searchObjective"
+                          ? `Drive ticket sales from high-intent searches for`
+                          : req.section === "singleMindedMessage"
+                            ? `The single-minded message:`
+                            : `For the team:`;
   const listSections =
     req.section === "notes" ||
     req.section === "direction" ||

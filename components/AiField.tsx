@@ -24,7 +24,10 @@ interface AiFieldProps {
     | "scope"
     | "principle"
     | "placement"
-    | "maintenance";
+    | "maintenance"
+    | "metaDescriptions"
+    | "searchObjective"
+    | "singleMindedMessage";
   value: string;
   onChange: (v: string) => void;
   // context for the AI draft

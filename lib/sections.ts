@@ -24,6 +24,15 @@ export type SectionId =
   | "modules"
   | "userFlows"
   | "maintenance"
+  | "messagingThemes"
+  | "metaPlacements"
+  | "metaCopy"
+  | "metaTracking"
+  | "searchObjective"
+  | "searchMessage"
+  | "searchStructure"
+  | "searchAssets"
+  | "searchExtensions"
   | "review";
 
 export interface WizardStep {
@@ -33,6 +42,10 @@ export interface WizardStep {
 
 export interface WizardConfig {
   steps: WizardStep[];
+
+  // Objective/Audience panel overrides (used by Digital Campaign Strategy)
+  kpis: boolean; // show a KPI list under Objective
+  audienceHint?: string;
 
   // Concept panel (visual)
   conceptLabel: string;
@@ -79,6 +92,7 @@ const SPINE: WizardStep[] = [
 const REVIEW: WizardStep = { id: "review", label: "Review & export" };
 
 const BASE: Omit<WizardConfig, "steps"> = {
+  kpis: false,
   conceptLabel: "Creative concept",
   conceptHint: "The core idea — what we see and the mood.",
   palette: false,
@@ -112,6 +126,7 @@ const POST          = "6f38fbdd-bf73-4dd4-bfb1-c092759c855a";
 const EBLAST        = "d1796326-24ad-4d01-8960-ab4cb43dd014";
 const EVITE         = "c3b43e9f-6a6b-44de-ab11-a73aff9e0c83";
 const INFLUENCER    = "bcc45c05-56e7-4950-b0cc-b0c1a48b5a5b";
+const DIGITAL_CAMPAIGN_STRATEGY = "00f85baa-f136-4ee4-91fa-ad3898907c30";
 
 export function getWizardConfig(ct: CreativeType): WizardConfig {
   switch (ct.archetype) {
@@ -344,7 +359,36 @@ export function getWizardConfig(ct: CreativeType): WizardConfig {
           notesLabel: "Logistics & expected outcomes",
         };
 
-      // Digital Campaign Strategy (and any other remaining strategy types)
+      // Digital Campaign Strategy — mirrors the real GO paid-media brief:
+      // Part 1 (Meta + Google Display, one shared Creative & Media Brief) +
+      // Part 2 (Google Search, intent-driven, its own structure).
+      if (ct.id === DIGITAL_CAMPAIGN_STRATEGY)
+        return {
+          ...BASE,
+          steps: [
+            { id: "basics", label: "Project basics" },
+            { id: "objective", label: "Objective & KPI" },
+            { id: "audience", label: "Audience Segmentation & Targeting" },
+            { id: "messagingThemes", label: "Messaging Themes" },
+            { id: "metaPlacements", label: "Placements & Budget" },
+            { id: "metaCopy", label: "Ad Copy" },
+            { id: "metaTracking", label: "URLs, Brand Safety & Tracking" },
+            { id: "searchObjective", label: "Search: Objective & Audience" },
+            { id: "searchMessage", label: "Search: Message & RTBs" },
+            { id: "searchStructure", label: "Search: Ad Groups & Keywords" },
+            { id: "searchAssets", label: "Search: RSA Headlines & Descriptions" },
+            { id: "searchExtensions", label: "Search: URL, Extensions & Measurement" },
+            { id: "specs", label: "Creative Sizes & Save Location" },
+            REVIEW,
+          ],
+          kpis: true,
+          audienceHint:
+            "Geo (Naples, Marco Island, Bonita Springs, Fort Myers, Punta Gorda, Charlotte/Collier/Lee County + radius), primary/secondary audience, interest & behavioral targeting, retargeting/lookalikes, and any GO-specific segments (past attendees of a related title, gala/donor lists, Maestro Club, Artis–Naples, partner audiences).",
+          sizes: true,
+          budget: true,
+        };
+
+      // Any other remaining strategy types
       return {
         ...BASE,
         steps: [
