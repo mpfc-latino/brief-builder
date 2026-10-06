@@ -5,8 +5,8 @@ import React from "react";
 export function Label({ children, hint }: { children: React.ReactNode; hint?: string }) {
   return (
     <div className="mb-1.5">
-      <label className="block text-sm font-semibold text-[#1a1d26]">{children}</label>
-      {hint && <p className="text-xs text-gray-500 mt-0.5">{hint}</p>}
+      <label className="block text-sm font-bold text-[var(--foreground)]">{children}</label>
+      {hint && <p className="text-xs text-[var(--muted)] mt-0.5 leading-relaxed">{hint}</p>}
     </div>
   );
 }
@@ -16,8 +16,8 @@ export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={
-        "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm " +
-        "outline-none focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand-soft)] " +
+        "w-full rounded-2xl border border-[var(--border)] bg-white/90 px-4 py-2.5 text-sm " +
+        "outline-none transition focus:border-[var(--brand)] focus:ring-4 focus:ring-[rgba(232,119,34,0.15)] " +
         (props.className ?? "")
       }
     />
@@ -29,8 +29,8 @@ export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
     <textarea
       {...props}
       className={
-        "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm leading-relaxed " +
-        "outline-none focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand-soft)] " +
+        "w-full rounded-[20px] border border-[var(--border)] bg-white/90 px-4 py-3 text-sm leading-relaxed shadow-[inset_0_1px_2px_rgba(48,37,105,0.05)] " +
+        "outline-none transition focus:border-[var(--brand)] focus:ring-4 focus:ring-[rgba(232,119,34,0.15)] " +
         (props.className ?? "")
       }
     />
@@ -42,8 +42,8 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
     <select
       {...props}
       className={
-        "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm " +
-        "outline-none focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand-soft)] " +
+        "w-full rounded-2xl border border-[var(--border)] bg-white/90 px-4 py-2.5 text-sm " +
+        "outline-none transition focus:border-[var(--brand)] focus:ring-4 focus:ring-[rgba(232,119,34,0.15)] " +
         (props.className ?? "")
       }
     />
@@ -56,55 +56,52 @@ export function Button({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "subtle" }) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand)]";
   const styles = {
-    primary: "bg-[var(--brand-strong)] text-white hover:opacity-90",
+    primary: "btn-orange hover:brightness-105",
     ghost: "bg-transparent text-[var(--accent-text)] hover:bg-[var(--brand-soft)]",
-    subtle: "bg-white border border-[var(--border)] text-[#1a1d26] hover:bg-gray-50",
+    subtle: "bg-[var(--glass-strong)] border border-[var(--border)] text-[var(--indigo)] hover:bg-white",
   }[variant];
   return <button {...props} className={`${base} ${styles} ${className}`} />;
 }
 
 export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-xl border border-[var(--border)] bg-white ${className}`}>{children}</div>
+    <div className={`glass rounded-3xl ${className}`}>{children}</div>
   );
 }
 
-// Latinovation logo, shown top-right on the landing page and every wizard step.
-// Drop the artwork at public/latinovation-logo.png — until then this renders
-// a tiny wordmark fallback so the layout never shows a broken image.
+// Latinovation wordmark, shown on the landing page and every wizard step.
+// Drop artwork at public/latinovation-logo.png and set LOGO_SRC to use it instead.
+const LOGO_SRC: string | null = null;
 export function Logo({ className = "" }: { className?: string }) {
-  const [failed, setFailed] = React.useState(false);
-  if (failed) {
-    return (
-      <span className={`select-none text-2xl font-extrabold tracking-tight text-[#302569] ${className}`}>
-        Latin<span className="text-[var(--brand)]">ovation</span>
-      </span>
-    );
+  if (LOGO_SRC) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={LOGO_SRC} alt="Latinovation" className={`h-9 w-auto object-contain ${className}`} />;
   }
-  // eslint-disable-next-line @next/next/no-img-element
   return (
-    <img
-      src="/latinovation-logo.png"
-      alt="Latinovation"
-      onError={() => setFailed(true)}
-      className={`h-9 w-auto object-contain ${className}`}
-    />
+    <span className={`select-none text-[22px] font-extrabold tracking-tight text-[var(--indigo)] ${className}`}>
+      Latin<span className="text-[var(--brand)]">ovation</span>
+    </span>
   );
 }
 
-export function BrandPanel({ lines }: { lines: { label: string; value: string }[] }) {
+export function BrandPanel({ lines, swatches }: { lines: { label: string; value: string }[]; swatches?: string[] }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] border-l-4 border-l-[var(--brand)] bg-[var(--brand-soft)] p-4">
-      <p className="text-xs font-bold uppercase tracking-wide text-[var(--accent-text)] mb-2">
-        Client alignment
-      </p>
+    <div className="rounded-[18px] border border-white/80 bg-gradient-to-br from-white/75 to-[rgba(251,227,207,0.7)] p-4 shadow-[var(--shadow-soft)]">
+      {swatches && swatches.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {swatches.map((hex) => (
+            <span key={hex} className="w-[22px] h-[22px] rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]" style={{ background: hex }} title={hex} />
+          ))}
+        </div>
+      )}
+      <p className="font-serif text-sm font-bold text-[var(--indigo)] mb-2">Client alignment</p>
       <dl className="space-y-1.5">
         {lines.map((l) => (
           <div key={l.label} className="text-xs">
-            <dt className="font-semibold text-[#1a1d26]">{l.label}</dt>
-            <dd className="text-gray-600">{l.value}</dd>
+            <dt className="font-semibold text-[var(--foreground)]">{l.label}</dt>
+            <dd className={l.label === "Voice" ? "font-serif italic text-[13px] leading-snug text-[var(--accent-text)]" : "text-[var(--muted)]"}>{l.value}</dd>
           </div>
         ))}
       </dl>

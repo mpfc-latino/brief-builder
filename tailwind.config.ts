@@ -15,12 +15,12 @@ export default {
         "brand-strong": "var(--brand-strong)",
         accent: "var(--accent)",
         "accent-text": "var(--accent-text)",
+        indigo: "var(--indigo)",
       },
       fontFamily: {
-        // One typeface only — DM Sans. `serif` is aliased to it so any legacy
-        // `font-serif` class keeps rendering DM Sans (no Playfair anywhere).
+        // DM Sans for body/UI; Playfair Display for headlines, titles, numbers.
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
     },
   },

@@ -2,30 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Latinovation brand tokens (source: Brand Guidelines — Master Edition, Apr 2026).
-   Ovation Orange now leads the interface — headings, highlights, and boxes.
-   --brand is the vivid orange (display + accents); --brand-strong is the
-   deeper, white-text-safe orange for filled buttons + active states; neutrals
-   stay warm (warm-white / sand). Indigo is retained only as deep body ink. */
+/* Latinovation brand tokens (Brand Guidelines — Master Edition, Apr 2026) applied
+   in a soft "glass" UI (Oct 2026 redesign): frosted sheets over a warm sand field
+   with an orange + indigo glow. Ovation Orange leads highlights and the main action;
+   Indigo carries depth (dark pills, the dock, completed steps, titles). */
 :root {
-  --background: #f9f7f4;   /* warm white — page background */
-  --foreground: #222222;   /* charcoal — body copy */
-  --brand: #e87722;        /* Ovation Orange — headings, highlights, accents */
-  --brand-strong: #9a4b00; /* deep orange — filled buttons / active (white text AA) */
-  --brand-soft: #fbe8d8;   /* pale orange — focus rings, hovers, panels */
-  --accent: #e87722;       /* Ovation Orange — dividers / decorative */
-  --accent-text: #9a4b00;  /* deep orange for text on light bg — AA */
-  --border: #e4dfd4;       /* warm sand — borders, dividers */
+  --background: #f6f1ea;   /* warm sand — page ground */
+  --foreground: #1f1d2b;   /* ink — body copy */
+  --muted: #6f6a7d;        /* secondary text */
+  --indigo: #302569;       /* Indigo Authority — titles, dark pills, dock */
+  --indigo-ink: #241c52;
+  --brand: #e87722;        /* Ovation Orange — highlights, accents */
+  --brand-strong: #9a4b00; /* deep orange — white-text-safe / orange text on light */
+  --brand-soft: #fbe3cf;   /* peach — focus rings, hovers, panels */
+  --lilac: #dcd6f3;        /* indigo tint — glow, alt icon tiles */
+  --accent: #e87722;
+  --accent-text: #9a4b00;
+  --border: rgba(48, 37, 105, 0.12);
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.85);
+  --shadow-soft: 0 1px 1px rgba(48, 37, 105, 0.04), 0 12px 32px -12px rgba(48, 37, 105, 0.22);
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: linear-gradient(160deg, #fbf7f2 0%, var(--background) 55%, #f1ecf7 100%) fixed;
   font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+}
+
+/* Ambient color field behind the glass (orange top-left, indigo bottom-right). */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+body::before {
+  width: 520px;
+  height: 520px;
+  top: -160px;
+  left: -120px;
+  background: radial-gradient(circle, #f6b27c 0%, var(--brand-soft) 60%, transparent 70%);
+  opacity: 0.7;
+}
+body::after {
+  width: 560px;
+  height: 560px;
+  bottom: -200px;
+  right: -160px;
+  background: radial-gradient(circle, #b9aee8 0%, var(--lilac) 55%, transparent 70%);
+  opacity: 0.7;
 }
 
 * {
   scrollbar-width: thin;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--brand);
+}
+
+/* Glass surfaces */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-soft);
+}
+.glass-frame {
+  background: rgba(255, 255, 255, 0.38);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 30px 80px -30px rgba(48, 37, 105, 0.35);
+}
+.btn-orange {
+  color: #fff;
+  background: linear-gradient(135deg, #f08a3a 0%, var(--brand) 40%, #c9600f 100%);
+  box-shadow: 0 10px 24px -10px rgba(232, 119, 34, 0.7);
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand-strong);
+}
+.text-gradient-orange {
+  background: linear-gradient(90deg, var(--brand), #f2a35f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
 }
 
 /* Rich-text editor (components/RichText.tsx) — ad concept + "Content (in image)" fields */
@@ -41,6 +118,7 @@ body {
 .richtext:focus { outline: none; }
 .richtext > * + * { margin-top: 0.35rem; }
 .richtext h1, .richtext h2 {
+  font-family: var(--font-serif), Georgia, serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--brand);

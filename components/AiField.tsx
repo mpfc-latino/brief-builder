@@ -95,8 +95,8 @@ export default function AiField({
     <div>
       <Label hint={hint}>{label}</Label>
 
-      <div className="rounded-lg border border-dashed border-[var(--border)] bg-gray-50 p-3 mb-2">
-        <p className="text-xs font-semibold text-gray-600 mb-1.5">
+      <div className="rounded-[20px] border border-[rgba(232,119,34,0.2)] bg-[rgba(251,227,207,0.45)] p-3.5 mb-2">
+        <p className="text-xs font-semibold text-[var(--accent-text)] mb-1.5">
           Jot a few notes / bullets, then let AI write the section:
         </p>
         <TextArea

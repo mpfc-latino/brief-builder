@@ -52,12 +52,12 @@ export default function RichText({
   });
 
   if (!editor) {
-    return <div className="rounded-lg border border-[var(--border)] bg-white h-32" />;
+    return <div className="rounded-[20px] border border-[var(--border)] bg-white/90 h-32" />;
   }
 
   const e = editor as Editor;
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-white focus-within:border-[var(--brand)] focus-within:ring-2 focus-within:ring-[var(--brand-soft)]">
+    <div className="rounded-[20px] overflow-hidden border border-[var(--border)] bg-white/90 focus-within:border-[var(--brand)] focus-within:ring-4 focus-within:ring-[rgba(232,119,34,0.15)]">
       <div className="flex flex-wrap items-center gap-0.5 border-b border-[var(--border)] p-1.5">
         <ToolBtn title="Bold" active={e.isActive("bold")} onClick={() => e.chain().focus().toggleBold().run()}>
           <strong>B</strong>

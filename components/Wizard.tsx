@@ -15,7 +15,7 @@ import { upsertDraft, deleteDraft, formatUpdatedAt } from "@/lib/brief-drafts";
 // on the Mood/content/notes step, so keep it out of the initial bundle.
 const RichText = dynamic(() => import("./RichText"), {
   ssr: false,
-  loading: () => <div className="rounded-lg border border-[var(--border)] bg-white h-32" />,
+  loading: () => <div className="rounded-[20px] border border-[var(--border)] bg-white/90 h-32" />,
 });
 
 const DEFAULT_STORY_FLOW =
@@ -581,56 +581,91 @@ export default function Wizard({
   const canNext = current.id === "basics" ? brief.projectName.trim().length > 0 : true;
   const isLast = current.id === "review";
 
+  const progressPct = Math.round(((step + 1) / STEPS.length) * 100);
+
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
-      {/* header */}
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <button onClick={onBack} className="text-sm text-[var(--accent-text)] hover:underline mb-1">
+    <div className="mx-auto max-w-[1080px] px-4 py-6 sm:py-10">
+      <div className="glass-frame rounded-[32px] sm:rounded-[40px] p-4 sm:p-8 space-y-6">
+      {/* top bar */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onBack}
+            className="rounded-full bg-[var(--glass-strong)] shadow-[var(--shadow-soft)] px-3.5 py-2 text-[13px] font-bold text-[var(--indigo)] hover:bg-white"
+          >
             ← Home
           </button>
-          <h1 className="font-sans text-2xl font-extrabold tracking-tight text-brand">
-            {creativeType.short} brief
-            <span className="text-base text-gray-400 font-normal"> · {client.name}</span>
-          </h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-gray-500 text-right leading-tight">
-            <span className="font-semibold">Step {step + 1} of {STEPS.length}</span>
-            <br />
-            {saveFailed ? (
-              <span className="text-amber-700">Couldn&apos;t autosave in this browser</span>
-            ) : savedAt ? (
-              <span title="Saved in this browser. Resume it from the home page anytime.">
-                ✓ Draft saved · {formatUpdatedAt(savedAt).replace("Today, ", "")}
-              </span>
-            ) : (
-              <span>Autosave on</span>
-            )}
-          </span>
           <Logo className="shrink-0" />
         </div>
+        {saveFailed ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800">
+            Couldn&apos;t autosave in this browser
+          </span>
+        ) : savedAt ? (
+          <span
+            className="inline-flex items-center gap-2 rounded-full border border-[rgba(47,111,79,0.15)] bg-[rgba(232,247,238,0.9)] px-3 py-1.5 text-xs font-semibold text-[#2f6f4f]"
+            title="Saved in this browser. Resume it from the home page anytime."
+          >
+            <span className="w-2 h-2 rounded-full bg-[#30a46c] shadow-[0_0_0_4px_rgba(48,164,108,0.18)]" />
+            Draft saved · {formatUpdatedAt(savedAt).replace("Today, ", "")}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--glass-strong)] px-3 py-1.5 text-xs font-semibold text-[var(--muted)]">
+            <span className="w-2 h-2 rounded-full bg-[var(--brand)] shadow-[0_0_0_4px_rgba(232,119,34,0.18)]" />
+            Autosave on
+          </span>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6">
+      {/* title */}
+      <div>
+        <p className="eyebrow">{client.name}</p>
+        <h1 className="font-serif text-[clamp(30px,4.2vw,44px)] font-extrabold leading-[1.05] tracking-[-0.01em] text-[var(--indigo)] mt-1.5">
+          {creativeType.short} brief
+        </h1>
+        <p className="text-sm text-[var(--muted)] mt-1.5">{brief.projectName || "Untitled project"}</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)] gap-5 items-start">
         {/* sidebar */}
-        <div className="space-y-4">
-          <Card className="p-2">
+        <div className="space-y-3">
+          <Card className="p-3">
+            <div
+              className="h-1.5 rounded-full bg-[rgba(48,37,105,0.08)] mx-2 mt-1.5 mb-3 overflow-hidden"
+              aria-label={`Progress: step ${step + 1} of ${STEPS.length}`}
+            >
+              <span
+                className="block h-full rounded-full bg-gradient-to-r from-[var(--brand)] to-[#f2a35f] transition-all"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
             <ol className="space-y-0.5">
               {STEPS.map((s, i) => (
                 <li key={s.id}>
                   <button
                     onClick={() => setStep(i)}
+                    aria-current={i === step ? "step" : undefined}
                     className={
-                      "w-full text-left text-xs rounded-md px-2.5 py-1.5 transition " +
+                      "w-full flex items-center gap-2.5 text-left text-[13px] font-semibold rounded-2xl px-2.5 py-2 transition " +
                       (i === step
-                        ? "bg-[var(--brand-strong)] text-white font-semibold"
+                        ? "bg-[var(--glass-strong)] text-[var(--foreground)] shadow-[var(--shadow-soft)]"
                         : i < step
-                          ? "text-[var(--accent-text)] hover:bg-[var(--brand-soft)]"
-                          : "text-gray-500 hover:bg-gray-50")
+                          ? "text-[var(--indigo)] hover:bg-white/60"
+                          : "text-[var(--muted)] hover:bg-white/60")
                     }
                   >
-                    {i < step ? "✓ " : `${i + 1}. `}
+                    <span
+                      className={
+                        "w-6 h-6 rounded-full grid place-items-center text-[11px] shrink-0 tabular-nums " +
+                        (i === step
+                          ? "bg-[var(--brand)] text-white"
+                          : i < step
+                            ? "bg-[var(--indigo)] text-white"
+                            : "bg-[rgba(48,37,105,0.07)] text-[var(--indigo)]")
+                      }
+                    >
+                      {i < step ? "✓" : i + 1}
+                    </span>
                     {s.label}
                   </button>
                 </li>
@@ -638,6 +673,7 @@ export default function Wizard({
             </ol>
           </Card>
           <BrandPanel
+            swatches={client.brand.colors.map((c) => c.hex).filter((h): h is string => Boolean(h))}
             lines={[
               { label: "Voice", value: client.brand.voice },
               { label: "Type", value: client.brand.typography },
@@ -647,7 +683,8 @@ export default function Wizard({
         </div>
 
         {/* content */}
-        <Card className="p-6 min-h-[420px]">
+        <Card className="p-5 sm:p-8 rounded-[32px] min-h-[420px]">
+          {!isLast && <h2 className="font-serif text-[28px] font-bold leading-tight text-[var(--indigo)] mb-5">{current.label}</h2>}
           {current.id === "basics" && (
             <div className="space-y-5">
               <div>
@@ -800,7 +837,7 @@ export default function Wizard({
                   <Label hint="Photos / files the designer must use, with the edits needed.">Source assets</Label>
                   <div className="space-y-3">
                     {(brief.sourceAssets ?? []).map((a, i) => (
-                      <div key={i} className="rounded-lg border border-[var(--border)] p-3 space-y-2">
+                      <div key={i} className="rounded-[20px] border border-[var(--border)] bg-white/55 p-3.5 space-y-2">
                         <div className="flex gap-2">
                           <TextInput placeholder="File name" value={a.file} onChange={(e) => updateAsset(i, { file: e.target.value })} />
                           <TextInput placeholder="Link (Drive, stock, etc.)" value={a.link} onChange={(e) => updateAsset(i, { link: e.target.value })} />
@@ -906,7 +943,7 @@ export default function Wizard({
                 Build the piece {cfg.slideUnit === "Frame" ? "frame" : "slide"} by {cfg.slideUnit === "Frame" ? "frame" : "slide"}. Each should advance the story.
               </p>
               {(brief.slides ?? []).map((s, i) => (
-                <div key={i} className="rounded-lg border border-[var(--border)] p-3 space-y-2">
+                <div key={i} className="rounded-[20px] border border-[var(--border)] bg-white/55 p-3.5 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wide text-[var(--brand)]">
                       {cfg.slideUnit} {i + 1}
@@ -1314,7 +1351,7 @@ export default function Wizard({
                 One block per page module/section. This is what the developer and copywriter build from.
               </p>
               {(brief.pageModules ?? []).map((m, i) => (
-                <div key={i} className="rounded-lg border border-[var(--border)] p-3 space-y-2">
+                <div key={i} className="rounded-[20px] border border-[var(--border)] bg-white/55 p-3.5 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wide text-[var(--brand)]">Module {i + 1}</span>
                     {(brief.pageModules?.length ?? 0) > 1 && (
@@ -1346,7 +1383,7 @@ export default function Wizard({
             <div className="space-y-4">
               <p className="text-sm text-gray-500">Show the page working, not just existing. One flow per persona/scenario.</p>
               {(brief.userFlows ?? []).map((f, i) => (
-                <div key={i} className="rounded-lg border border-[var(--border)] p-3 space-y-2">
+                <div key={i} className="rounded-[20px] border border-[var(--border)] bg-white/55 p-3.5 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wide text-[var(--brand)]">Flow {i + 1}</span>
                     {(brief.userFlows?.length ?? 0) > 1 && (
@@ -1452,7 +1489,7 @@ export default function Wizard({
                             const selected = brief.sizeIds.includes(s.id);
                             return (
                             <div key={s.id} className="rounded-md">
-                              <label className="flex items-start gap-2 text-sm px-2 py-1 hover:bg-gray-50 cursor-pointer">
+                              <label className="flex items-start gap-2 text-sm px-2.5 py-1.5 rounded-xl hover:bg-white/70 cursor-pointer">
                                 <input type="checkbox" className="mt-1" checked={selected} onChange={() => toggleSize(s.id)} />
                                 <span>
                                   {s.label}
@@ -1591,18 +1628,34 @@ export default function Wizard({
             />
           )}
 
-          {/* nav */}
-          {!isLast && (
-            <div className="flex justify-between mt-8 pt-4 border-t border-[var(--border)]">
-              <Button variant="subtle" disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}>
-                ← Back
-              </Button>
-              <Button disabled={!canNext} onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}>
-                Next →
-              </Button>
+          {/* nav dock */}
+          <div className="sticky bottom-4 mt-8 flex items-center justify-between gap-2.5 rounded-full bg-[rgba(36,28,82,0.92)] p-2 text-white shadow-[0_20px_40px_-18px_rgba(36,28,82,0.7)] backdrop-blur-xl">
+            <button
+              aria-label="Back"
+              disabled={step === 0}
+              onClick={() => setStep((s) => Math.max(0, s - 1))}
+              className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 grid place-items-center shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ←
+            </button>
+            <div className="flex items-center gap-2.5 min-w-0 text-sm font-semibold">
+              <span className="w-9 h-9 rounded-full border border-white/35 grid place-items-center font-serif font-bold text-xs tabular-nums shrink-0">
+                {step + 1}/{STEPS.length}
+              </span>
+              <span className="truncate hidden sm:inline">
+                {isLast ? "Ready to generate" : `Next: ${STEPS[step + 1]?.label ?? ""}`}
+              </span>
             </div>
-          )}
+            {isLast ? (
+              <span className="w-11 shrink-0" aria-hidden="true" />
+            ) : (
+              <Button disabled={!canNext} onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}>
+                Next <span className="w-[22px] h-[22px] rounded-full bg-white/25 grid place-items-center">→</span>
+              </Button>
+            )}
+          </div>
         </Card>
+      </div>
       </div>
     </div>
   );
@@ -1663,10 +1716,10 @@ function Review({
 
   return (
     <div>
-      <h2 className="font-sans text-xl font-extrabold tracking-tight text-brand mb-1">Review &amp; export</h2>
+      <h2 className="font-serif text-[28px] font-bold leading-tight text-[var(--indigo)] mb-1">Review &amp; export</h2>
       <p className="text-sm text-gray-500 mb-4">Check everything, then generate the styled Word brief.</p>
 
-      <div className="rounded-lg border border-[var(--border)] p-4 mb-5 max-h-[360px] overflow-auto">
+      <div className="rounded-[20px] border border-[var(--border)] bg-white/55 p-4 mb-5 max-h-[360px] overflow-auto">
         {row("Project", `${brief.projectName} — ${creativeType.short}`)}
         {row("Client", client.name)}
         {brief.hasEvent && row("Event", [brief.eventDate, brief.venue].filter(Boolean).join(" · "))}
