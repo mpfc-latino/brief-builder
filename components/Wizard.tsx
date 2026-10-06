@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import type { BriefData, ClientProfile, CreativeType, SourceAsset, SlideUnit, OwnershipRow, PageModule, UserFlow } from "@/lib/types";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import type { BriefData, ClientProfile, CreativeType, CustomSize, SourceAsset, SlideUnit, OwnershipRow, PageModule, UserFlow } from "@/lib/types";
 import { brandContextString } from "@/lib/format";
 import { getSizesFor, categoriesOf, getSize } from "@/lib/sizes";
 import { getWizardConfig, wizardConfigHasStep, type WizardConfig } from "@/lib/sections";
@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { Label, TextInput, TextArea, Select, Button, Card, BrandPanel, Logo } from "./ui";
 import AiField from "./AiField";
 import { saveToHistory } from "@/lib/brief-history";
+import { upsertDraft, deleteDraft, formatUpdatedAt } from "@/lib/brief-drafts";
 
 // Lazy-load the rich-text editor (Tiptap/ProseMirror is ~140kB) — it only appears
 // on the Mood/content/notes step, so keep it out of the initial bundle.
@@ -86,11 +87,16 @@ export default function Wizard({
   creativeType,
   onBack,
   initialBrief,
+  initialStep = 0,
+  draftId,
 }: {
   client: ClientProfile;
   creativeType: CreativeType;
   onBack: () => void;
   initialBrief?: BriefData;
+  initialStep?: number;
+  /** Autosave slot for this session (new or resumed draft). */
+  draftId: string;
 }) {
   const cfg = useMemo(() => getWizardConfig(creativeType), [creativeType]);
   const STEPS = cfg.steps;
@@ -102,7 +108,7 @@ export default function Wizard({
     .map((c) => `${c.label}${c.hex ? ` (${c.hex})` : ""}${c.note ? ` — ${c.note}` : ""}`)
     .join("\n");
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(() => Math.min(initialStep, cfg.steps.length - 1));
   const [brief, setBrief] = useState<BriefData>(
     initialBrief ?? {
       clientId: client.id,
@@ -121,6 +127,8 @@ export default function Wizard({
       designerNotes: "",
       sizeIds: [],
       sizeVariants: {},
+      sizeSpecs: {},
+      customSizes: [],
       duration: "",
       saveLocation: "",
       // social
@@ -185,6 +193,43 @@ export default function Wizard({
   const [useMoodboard, setUseMoodboard] = useState(true);
 
   const current = STEPS[step];
+
+  // ---- autosave ----
+  // Skip the first render (nothing changed yet) and skip a brief that was just
+  // generated/saved — its draft was cleared on purpose. Any later edit re-saves.
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const firstRender = useRef(true);
+  const finalizedBrief = useRef<BriefData | null>(null);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    if (finalizedBrief.current === brief) return;
+    const t = setTimeout(() => {
+      const ok = upsertDraft({
+        id: draftId,
+        clientId: client.id,
+        clientName: client.name,
+        creativeTypeId: creativeType.id,
+        creativeTypeShort: creativeType.short,
+        projectName: brief.projectName,
+        step,
+        stepCount: STEPS.length,
+        stepLabel: STEPS[step]?.label ?? "",
+        brief,
+      });
+      setSaveFailed(!ok);
+      if (ok) setSavedAt(new Date().toISOString());
+    }, 500);
+    return () => clearTimeout(t);
+  }, [brief, step]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function markFinalized() {
+    finalizedBrief.current = brief;
+    deleteDraft(draftId);
+  }
   const has = (id: Parameters<typeof wizardConfigHasStep>[1]) => wizardConfigHasStep(cfg, id);
 
   function set<K extends keyof BriefData>(key: K, value: BriefData[K]) {
@@ -196,12 +241,37 @@ export default function Wizard({
     const c = client.campaigns.find((x) => x.id === id);
     if (c) set("audience", c.audience);
     else set("audience", client.defaultAudience);
+    applySegmentMessages(id || undefined, brief.secondaryCampaignId);
+  }
+
+  // Segment messaging themes → Key messages / Messaging themes. A field is only
+  // (re)filled when it's empty or still holds the last auto-filled text, so a
+  // segment change never overwrites copy the user has already edited.
+  function segmentMessages(primaryId?: string, secondaryId?: string) {
+    const p = client.campaigns.find((x) => x.id === primaryId);
+    const sec = client.campaigns.find((x) => x.id === secondaryId && x.id !== primaryId);
+    const parts: string[] = [];
+    if (p?.keyMessages) parts.push(sec?.keyMessages ? `Primary segment: ${p.name}\n${p.keyMessages}` : p.keyMessages);
+    if (sec?.keyMessages) parts.push(`Secondary segment: ${sec.name}\n${sec.keyMessages}`);
+    return parts.join("\n\n");
+  }
+  function applySegmentMessages(primaryId?: string, secondaryId?: string) {
+    const next = segmentMessages(primaryId, secondaryId);
+    setBrief((b) => {
+      const prev = b.segmentMessagesAuto ?? "";
+      const upd: BriefData = { ...b, segmentMessagesAuto: next };
+      if (has("keyMessages") && (!(b.keyMessages ?? "").trim() || b.keyMessages === prev)) upd.keyMessages = next;
+      if (has("messagingThemes") && (!(b.messagingThemes ?? "").trim() || b.messagingThemes === prev))
+        upd.messagingThemes = next;
+      return upd;
+    });
   }
 
   function selectSecondaryCampaign(id: string) {
     set("secondaryCampaignId", id || undefined);
     const c = client.campaigns.find((x) => x.id === id);
     set("secondaryAudience", c ? c.audience : undefined);
+    applySegmentMessages(brief.campaignId, id || undefined);
   }
 
   // ---- source assets repeater ----
@@ -297,6 +367,25 @@ export default function Wizard({
       };
     });
   }
+  // ---- per-publication size specs + custom sizes (print ads) ----
+  function setSizeSpec(id: string, value: string) {
+    setBrief((b) => ({ ...b, sizeSpecs: { ...(b.sizeSpecs ?? {}), [id]: value } }));
+  }
+  function updateCustomSize(i: number, patch: Partial<CustomSize>) {
+    setBrief((b) => {
+      const arr = [...(b.customSizes ?? [])];
+      arr[i] = { ...arr[i], ...patch };
+      return { ...b, customSizes: arr };
+    });
+  }
+  function addCustomSize() {
+    setBrief((b) => ({ ...b, customSizes: [...(b.customSizes ?? []), { name: "", spec: "" }] }));
+  }
+  function removeCustomSize(i: number) {
+    setBrief((b) => ({ ...b, customSizes: (b.customSizes ?? []).filter((_, idx) => idx !== i) }));
+  }
+  const offersCustomSizes = sizeOptions.some((s) => s.needsSpec);
+
   function setAllSizes(on: boolean) {
     if (!on) {
       setBrief((b) => ({ ...b, sizeIds: [], sizeVariants: {} }));
@@ -351,6 +440,7 @@ export default function Wizard({
       inImageContent: cfg.inImageContent ? brief.inImageContent : "",
       designerNotes: cfg.designerNotes || has("notes") ? brief.designerNotes : "",
       sizeIds: cfg.sizes ? brief.sizeIds : [],
+      customSizes: cfg.sizes ? (brief.customSizes ?? []).filter((c) => c.name.trim() || c.spec.trim()) : [],
       duration: cfg.duration ? brief.duration : "",
       // social
       contentDirection: has("direction") ? brief.contentDirection : "",
@@ -421,6 +511,7 @@ export default function Wizard({
   const [generating, setGenerating] = useState(false);
   async function generate() {
     setGenerating(true);
+    markFinalized();
     saveToHistory({
       clientId: client.id,
       clientName: client.name,
@@ -456,6 +547,7 @@ export default function Wizard({
   async function saveToDrive() {
     setSaving(true);
     setSaveResult(null);
+    markFinalized();
     saveToHistory({
       clientId: client.id,
       clientName: client.name,
@@ -495,7 +587,7 @@ export default function Wizard({
       <div className="flex items-center justify-between mb-5">
         <div>
           <button onClick={onBack} className="text-sm text-[var(--accent-text)] hover:underline mb-1">
-            ← Start over
+            ← Home
           </button>
           <h1 className="font-sans text-2xl font-extrabold tracking-tight text-brand">
             {creativeType.short} brief
@@ -503,8 +595,18 @@ export default function Wizard({
           </h1>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs font-semibold text-gray-500">
-            Step {step + 1} of {STEPS.length}
+          <span className="text-xs text-gray-500 text-right leading-tight">
+            <span className="font-semibold">Step {step + 1} of {STEPS.length}</span>
+            <br />
+            {saveFailed ? (
+              <span className="text-amber-700">Couldn&apos;t autosave in this browser</span>
+            ) : savedAt ? (
+              <span title="Saved in this browser. Resume it from the home page anytime.">
+                ✓ Draft saved · {formatUpdatedAt(savedAt).replace("Today, ", "")}
+              </span>
+            ) : (
+              <span>Autosave on</span>
+            )}
           </span>
           <Logo className="shrink-0" />
         </div>
@@ -1284,7 +1386,15 @@ export default function Wizard({
           {/* ── Key Messages ── */}
           {current.id === "keyMessages" && (
             <div className="space-y-3">
-              <Label hint={cfg.keyMessagesHint}>{cfg.keyMessagesLabel}</Label>
+              <Label
+                hint={
+                  brief.segmentMessagesAuto
+                    ? `${cfg.keyMessagesHint} Pre-filled from the selected segment's messaging themes — edit as needed.`
+                    : cfg.keyMessagesHint
+                }
+              >
+                {cfg.keyMessagesLabel}
+              </Label>
               <TextArea rows={8} value={brief.keyMessages ?? ""} onChange={(e) => set("keyMessages", e.target.value)} />
             </div>
           )}
@@ -1349,6 +1459,16 @@ export default function Wizard({
                                   {s.note && <span className="block text-[11px] text-gray-400 leading-snug">{s.note}</span>}
                                 </span>
                               </label>
+                              {selected && s.needsSpec && (
+                                <div className="ml-7 mb-1.5 mr-1">
+                                  <TextInput
+                                    value={brief.sizeSpecs?.[s.id] ?? ""}
+                                    onChange={(e) => setSizeSpec(s.id, e.target.value)}
+                                    placeholder={'Publication + actual size, e.g. Gulfshore Life: trim 8.375×10.875", bleed 0.125"'}
+                                    className="text-xs py-1.5"
+                                  />
+                                </div>
+                              )}
                               {selected && (s.variants?.length ?? 0) > 0 && (
                                 <div className="ml-7 mb-1 flex flex-wrap gap-x-3 gap-y-1">
                                   {s.variants!.map((v) => (
@@ -1371,6 +1491,43 @@ export default function Wizard({
                       );
                     })}
                   </div>
+                  {offersCustomSizes && (
+                    <div className="mt-4">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <p className="text-xs font-bold uppercase tracking-wide text-gray-400">Custom size</p>
+                        <span className="text-[11px] text-gray-400">Any other unit, with the publication&apos;s actual size</span>
+                      </div>
+                      <div className="space-y-2">
+                        {(brief.customSizes ?? []).map((c, i) => (
+                          <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1.4fr_auto] gap-2 items-center">
+                            <TextInput
+                              value={c.name}
+                              onChange={(e) => updateCustomSize(i, { name: e.target.value })}
+                              placeholder="Name, e.g. Naples Illustrated · 1/3 page square"
+                              className="text-xs py-1.5"
+                            />
+                            <TextInput
+                              value={c.spec}
+                              onChange={(e) => updateCustomSize(i, { spec: e.target.value })}
+                              placeholder={'Actual size, e.g. 4.75×4.75" trim, no bleed'}
+                              className="text-xs py-1.5"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeCustomSize(i)}
+                              className="text-gray-300 hover:text-red-400 text-lg leading-none px-1"
+                              title="Remove custom size"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                        <button type="button" onClick={addCustomSize} className="text-xs font-semibold text-[var(--brand)] hover:underline">
+                          + Add custom size
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               {cfg.duration && (
@@ -1483,9 +1640,15 @@ function Review({
       const s = getSize(id);
       if (!s) return null;
       const vs = brief.sizeVariants?.[id] ?? [];
-      return `${s.label}${vs.length ? ` (+${vs.length} variant${vs.length > 1 ? "s" : ""})` : ""}`;
+      const spec = s.needsSpec ? brief.sizeSpecs?.[id]?.trim() : "";
+      return `${s.label}${spec ? ` (${spec})` : ""}${vs.length ? ` (+${vs.length} variant${vs.length > 1 ? "s" : ""})` : ""}`;
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    .concat(
+      (brief.customSizes ?? [])
+        .filter((c) => c.name.trim() || c.spec.trim())
+        .map((c) => (c.name.trim() ? `${c.name.trim()}${c.spec.trim() ? ` (${c.spec.trim()})` : ""}` : c.spec.trim()))
+    );
   const slideSummary = (brief.slides ?? [])
     .filter((s) => s.title.trim() || s.onImageText.trim())
     .map((s, i) => `${cfg.slideUnit} ${i + 1}${s.title ? `: ${s.title}` : ""}`)

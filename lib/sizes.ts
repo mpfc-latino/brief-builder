@@ -132,30 +132,16 @@ const TYPE_SIZES: Record<string, SizeOption[]> = {
     { id: "ad-billboard-970x250", label: "Billboard — 970×250", dimensions: "970x250", category: "Display Network", note: "IAB standard · Targeted Digital Display" },
     { id: "ad-category-sponsorship-554x100", label: "Category Sponsorship — 554×100", dimensions: "554x100", category: "Display Network" },
   ],
-  // Print Ad — publication-dependent; standard fractions (confirm trim/bleed with the publication),
-  // plus real specs for publications we've confirmed.
+  // Print Ad — formats only. Every publication has its own trim/bleed/live area, so each
+  // ticked format asks for the real size per media (BriefData.sizeSpecs), and the step
+  // offers a free "Custom size" block (BriefData.customSizes) for anything else.
   "4480c9ef-aad7-41af-9acb-b955fb662254": [
-    { id: "printad-full", label: "Full page — 8.5×11\"", dimensions: "8.5x11in", category: "Print Ad", note: `${PRINT} · confirm trim/bleed with publication` },
-    { id: "printad-half-h", label: "Half page, horizontal — 8.5×5.5\"", dimensions: "8.5x5.5in", category: "Print Ad", note: "Confirm with publication" },
-    { id: "printad-half-v", label: "Half page, vertical — 4.25×11\"", dimensions: "4.25x11in", category: "Print Ad", note: "Confirm with publication" },
-    { id: "printad-quarter", label: "Quarter page — 4.25×5.5\"", dimensions: "4.25x5.5in", category: "Print Ad", note: "Confirm with publication" },
-    { id: "printad-4.75x3.75", label: "4.75×3.75\"", dimensions: "4.75x3.75in", category: "Print Ad", note: "Confirm with publication" },
-    { id: "printad-halfpage-specialsections-10x4.92", label: "Half page ad, Special Sections — 10×4.92\"", dimensions: "10x4.92in", category: "Print Ad", note: "Confirm with publication" },
-    { id: "printad-halfpage-10x9.95", label: "Half page — 10×9.95\"", dimensions: "10x9.95in", category: "Print Ad", note: "Confirm with publication" },
-    {
-      id: "printad-floridahome-full",
-      label: "Full Page — 8×10.75\" trim",
-      dimensions: "8x10.75in",
-      category: "Print Ad",
-      note: `${PRINT} · Bleed 8.25×11" · Trim 8×10.75" · Live area 7.5×10.25"`,
-    },
-    {
-      id: "printad-floridahome-spread",
-      label: "2-Page Spread (Double Truck) — 16×10.75\" trim",
-      dimensions: "16x10.75in",
-      category: "Print Ad",
-      note: `${PRINT} · Bleed 16.25×11" · Trim 16×10.75" · Live area 15.5×10.25"`,
-    },
+    { id: "printad-spread", label: "Two-page spread", dimensions: "", category: "Print Ad", note: PRINT, needsSpec: true },
+    { id: "printad-full", label: "Full page", dimensions: "", category: "Print Ad", note: PRINT, needsSpec: true },
+    { id: "printad-half-h", label: "Half page, horizontal", dimensions: "", category: "Print Ad", note: PRINT, needsSpec: true },
+    { id: "printad-half-v", label: "Half page, vertical", dimensions: "", category: "Print Ad", note: PRINT, needsSpec: true },
+    { id: "printad-quarter-v", label: "Quarter page, vertical", dimensions: "", category: "Print Ad", note: PRINT, needsSpec: true },
+    { id: "printad-quarter-h", label: "Quarter page, horizontal", dimensions: "", category: "Print Ad", note: PRINT, needsSpec: true },
   ],
 
   // ── Social Content ───────────────────────────────────────────────────────
@@ -260,12 +246,24 @@ export function categoriesOf(sizes: SizeOption[]): string[] {
   return Array.from(new Set(sizes.map((s) => s.category)));
 }
 
+// Retired Print Ad sizes — no longer offered, kept so briefs saved before the
+// Oct 2026 format change still resolve their labels in history/drafts/.docx.
+const LEGACY_SIZES: SizeOption[] = [
+    { id: "printad-quarter", label: "Quarter page — 4.25×5.5\"", dimensions: "4.25x5.5in", category: "Print Ad", note: "Confirm with publication" },
+    { id: "printad-4.75x3.75", label: "4.75×3.75\"", dimensions: "4.75x3.75in", category: "Print Ad", note: "Confirm with publication" },
+    { id: "printad-halfpage-specialsections-10x4.92", label: "Half page ad, Special Sections — 10×4.92\"", dimensions: "10x4.92in", category: "Print Ad", note: "Confirm with publication" },
+    { id: "printad-halfpage-10x9.95", label: "Half page — 10×9.95\"", dimensions: "10x9.95in", category: "Print Ad", note: "Confirm with publication" },
+    { id: "printad-floridahome-full", label: "Full Page — 8×10.75\" trim", dimensions: "8x10.75in", category: "Print Ad", note: `${PRINT} · Bleed 8.25×11" · Trim 8×10.75" · Live area 7.5×10.25"` },
+    { id: "printad-floridahome-spread", label: "2-Page Spread (Double Truck) — 16×10.75\" trim", dimensions: "16x10.75in", category: "Print Ad", note: `${PRINT} · Bleed 16.25×11" · Trim 16×10.75" · Live area 15.5×10.25"` },
+];
+
 // Flat lookup across every catalog (used by the .docx generator).
 const ALL_SIZES: SizeOption[] = [
   ...Object.values(TYPE_SIZES).flat(),
   ...Object.values(CLIENT_ARCHETYPE_SIZES).flatMap((byArch) => Object.values(byArch).flat()),
   ...Object.values(ARCHETYPE_SIZES).flat(),
   ...DEFAULT_SIZES,
+  ...LEGACY_SIZES,
 ];
 
 export function getSize(id: string): SizeOption | undefined {

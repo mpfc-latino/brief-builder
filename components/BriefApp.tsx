@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import { CLIENTS } from "@/lib/clients";
 import { CREATIVE_TYPES, ARCHETYPE_LABELS, LIVE_ARCHETYPES } from "@/lib/creativeTypes";
 import type { Archetype, BriefData } from "@/lib/types";
-import { Card, Select, Label, Logo } from "./ui";
+import { Card, Select, Label, Logo, Button } from "./ui";
 import Wizard from "./Wizard";
 import { loadHistory, deleteFromHistory, formatSavedAt, type HistoryEntry } from "@/lib/brief-history";
+import { loadDrafts, deleteDraft, newDraftId, formatUpdatedAt, type DraftEntry } from "@/lib/brief-drafts";
 
 const GROUP_COLOR: Record<string, string> = {
   "D&CP": "#30a46c",
@@ -20,19 +21,46 @@ export default function BriefApp() {
   const [clientId, setClientId] = useState(CLIENTS[0]?.id ?? "");
   const [typeId, setTypeId] = useState<string | null>(null);
   const [initialBrief, setInitialBrief] = useState<BriefData | undefined>(undefined);
+  const [initialStep, setInitialStep] = useState(0);
+  const [draftId, setDraftId] = useState("");
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [drafts, setDrafts] = useState<DraftEntry[]>([]);
 
   useEffect(() => {
     setHistory(loadHistory());
+    setDrafts(loadDrafts());
   }, []);
 
   const client = CLIENTS.find((c) => c.id === clientId);
   const creativeType = CREATIVE_TYPES.find((t) => t.id === typeId);
 
+  function openType(id: string) {
+    setDraftId(newDraftId());
+    setInitialStep(0);
+    setInitialBrief(undefined);
+    setTypeId(id);
+  }
+
   function loadEntry(entry: HistoryEntry) {
     setClientId(entry.clientId);
-    setTypeId(entry.creativeTypeId);
+    setDraftId(newDraftId());
+    setInitialStep(0);
     setInitialBrief(entry.brief);
+    setTypeId(entry.creativeTypeId);
+  }
+
+  function resumeDraft(d: DraftEntry) {
+    setClientId(d.clientId);
+    setDraftId(d.id);
+    setInitialStep(d.step);
+    setInitialBrief(d.brief);
+    setTypeId(d.creativeTypeId);
+  }
+
+  function removeDraft(id: string) {
+    if (!window.confirm("Discard this draft? This can't be undone.")) return;
+    deleteDraft(id);
+    setDrafts(loadDrafts());
   }
 
   function removeEntry(id: string) {
@@ -43,12 +71,16 @@ export default function BriefApp() {
   if (client && creativeType) {
     return (
       <Wizard
+        key={draftId}
+        draftId={draftId}
+        initialStep={initialStep}
         client={client}
         creativeType={creativeType}
         onBack={() => {
           setTypeId(null);
           setInitialBrief(undefined);
           setHistory(loadHistory());
+          setDrafts(loadDrafts());
         }}
         initialBrief={initialBrief}
       />
@@ -70,6 +102,40 @@ export default function BriefApp() {
         </div>
         <Logo className="mt-1 shrink-0" />
       </header>
+
+      {drafts.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent-text mb-3">
+            Continue where you left off
+          </h2>
+          <div className="space-y-2">
+            {drafts.map((d) => (
+              <div
+                key={d.id}
+                className="flex items-center justify-between rounded-lg border border-[var(--border)] border-l-4 border-l-[var(--brand)] bg-white px-4 py-3 gap-4"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[#1a1d26] truncate">{d.projectName || "(untitled)"}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {d.clientName} · {d.creativeTypeShort} · Step {d.step + 1} of {d.stepCount}: {d.stepLabel} · Saved{" "}
+                    {formatUpdatedAt(d.updatedAt)}
+                  </p>
+                </div>
+                <Button onClick={() => resumeDraft(d)} className="shrink-0">
+                  Resume →
+                </Button>
+                <button
+                  onClick={() => removeDraft(d.id)}
+                  className="text-gray-300 hover:text-red-400 transition-colors text-lg leading-none shrink-0"
+                  title="Discard this draft"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Card className="p-6 mb-8 max-w-sm">
         <Label hint="Brand rules and campaigns load from this client.">Client</Label>
@@ -104,7 +170,7 @@ export default function BriefApp() {
                   <button
                     key={t.id}
                     disabled={!live}
-                    onClick={() => live && setTypeId(t.id)}
+                    onClick={() => live && openType(t.id)}
                     className={
                       "text-left rounded-lg border px-3 py-2.5 text-sm transition " +
                       (live

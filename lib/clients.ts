@@ -44,6 +44,8 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-opera-lovers",
         name: "Grand Opera / Opera Lovers",
         type: "Consumer",
+        keyMessages:
+          "Messaging themes:\n• World-class artistry · Beloved and iconic repertoire · Grand opera prestige\n• Composer and title recognition · Emotional power of the music\n• Featured artists and notable credentials · One-night-only or limited-run occasion\n• GO's role in enriching Southwest Florida's cultural life\n\nLanguage that works:\nWorld-class · Grand opera · Iconic opera · Beloved masterpiece · Acclaimed artists · Renowned performers · One night only · Full-scale production · Soaring voices · Passion, fate, devotion, tragedy, brilliance · Presented at Artis–Naples / Barbara B. Mann / Charlotte Performing Arts Center",
         audience:
           "• Affluent, educated adults 55–80, primarily couples, across Collier, Lee, and Charlotte counties; heavy snowbird overlap — most patrons are seasonal residents\n• Drawn to opera itself: canonical repertoire, renowned artists, beloved titles (Puccini, Verdi, Bizet, Gershwin, Mozart), and the prestige of a grand production\n• GO's most loyal and highest-intent segment — Maestro Club members, major donors, repeat buyers; also the deepest donor overlap\n• Respond to: artistic credibility, title and composer recognition, world-class framing, prestige venue cues, polished CTAs (Reserve Your Seats, Get Tickets)\n• Avoid: generic lifestyle messaging without artistic substance; anything casual, vague, or that underplays the opera itself\n• Strategic role: Core audience — the revenue anchor, the early adopter, and the segment that stabilizes attendance and institutional loyalty",
       },
@@ -52,6 +54,8 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-social-occasional",
         name: "Social & Occasional Attendees",
         type: "Consumer",
+        keyMessages:
+          "Messaging themes:\n• Elegant night out · One-of-a-kind experience · Music, dining, and community\n• Romantic / festive / glamorous atmosphere · Beautiful venue\n• Experience opera in an intimate, welcoming way · A special evening with friends\n• Gulfshore Opera as part of Southwest Florida's vibrant social and cultural life\n\nLanguage that works:\nRomantic evening · Elegant soirée · One-night-only · Cocktail-style setting · Champagne, hors d'oeuvres, dessert · A stylish evening · Lively concert · An unforgettable evening · Perfect date night · A special afternoon out · Experience music in a beautiful setting",
         audience:
           "• Affluent, culturally interested adults 45–75 — couples, friend groups, club and donor circles, women's social groups — across Collier, Lee, and Charlotte counties; strong snowbird and year-round mix\n• Drawn to the occasion as much as the art: elegant venues, cocktail and dinner settings, themed concerts, galas, luncheons, and community events\n• Not necessarily opera-literate — motivation is social, experiential, and lifestyle-driven; messaging must feel inviting, not academic\n• Key event types: Taste of Opera, Songs of Love, Style & Song Luncheon, Masquerade Gala, country-club soirées, Broadway crossover programs\n• Respond to: romantic, elegant, festive framing; venue and atmosphere cues; CTAs like 'Reserve Your Seats,' 'Join us for an elegant evening,' 'Bring a friend'\n• Strategic role: Relationship-expansion audience — helps GO grow beyond core opera loyalists and build broader community support",
       },
@@ -60,6 +64,8 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-newcomers",
         name: "Newcomers",
         type: "Consumer",
+        keyMessages:
+          "Messaging themes:\n• Welcoming, clear, inviting · Experience this for yourself\n• A perfect introduction to GO / opera · Recognizable music and powerful stories\n• Beautiful live voices in a local setting · One-night-only opportunity\n• Opera made accessible and emotionally immediate\n\nLanguage that works:\nOne night only · Feel the fire · Unforgettable evening · A lively concert · An intimate concert · Perfect for longtime fans and first-time guests · A musical journey · Opera meets Broadway · Famous opera scenes · Songs you know and love · A romantic night out · In a beautiful setting · A playful spin · Welcoming, accessible, community-driven language",
         audience:
           "• Culturally curious adults 30–65 — couples, individuals, new residents, local professionals, guests of loyal patrons — across SWFL; the broadest demographic range of all segments\n• Being introduced to GO or opera for the first time; no prior relationship with the art form or the organization\n• Motivated by curiosity, recognizable titles, emotional hooks, and welcoming framing — not repertoire depth or institutional loyalty\n• Key entry points: Songs of Love, Opera to Broadway, Carmen, Porgy and Bess, community concerts, social events, high-recognition titles\n• Respond to: clarity, emotional storytelling, accessible language, warm low-pressure CTAs ('Join us,' 'Experience it live,' 'Perfect for first-time guests')\n• Biggest barrier: 'opera isn't for me' — messaging must reduce intimidation and lead with the experience, not the institution\n• Strategic role: Growth audience — where new ticket buyers and long-term audience development begins",
       },
@@ -68,6 +74,8 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-donors",
         name: "Donors / Philanthropic Supporters",
         type: "Consumer",
+        keyMessages:
+          "Messaging themes:\n• Community enrichment · Access and education · Supporting youth and emerging artists\n• Sustaining artistic excellence · Legacy and leadership\n• Join us in shaping the future of opera in Southwest Florida",
         audience:
           "• Affluent to high-net-worth adults 55+, civic leaders, philanthropic households, board-connected and socially influential — concentrated in Naples, Marco Island, Bonita Springs, and luxury communities\n• Relationship with GO is defined by giving, not just attendance — major donors, Maestro Club members, gala supporters, annual fund contributors, prospective philanthropists\n• Motivated by mission impact, legacy, cultural stewardship, regional pride, and insider access — not ticket sales\n• Key touchpoints: personalized invitations, donor dinners, gala collateral, impact reports, sponsorship decks, one-to-one outreach\n• Respond to: evidence of growth and excellence, leadership trust, recognition, exclusivity, and clear articulation of community benefit\n• Biggest barrier: messaging that feels transactional or ticket-focused — requires stewardship, not promotion\n• Strategic role: Funding audience — essential to financial sustainability, mission advancement, and long-term institutional growth",
       },
@@ -76,6 +84,8 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-community-partners",
         name: "Community Partners / Institutional Stakeholders",
         type: "Institutional",
+        keyMessages:
+          "Messaging themes:\n• Regional cultural leadership · Audience reach across three counties\n• Tourism and hospitality alignment · Community enrichment\n• Strong brand presentation · Shared visibility and impact",
         audience:
           "• Not a consumer segment — organizations, businesses, funders, media, and civic institutions; represented by marketing directors, executives, development leads, venue teams, and cultural administrators\n• Supports GO through sponsorship, hosting, venue access, media partnership, grantmaking, tourism promotion, or community alignment\n• Motivated by brand alignment, shared visibility, audience reach, regional credibility, and measurable community impact\n• Key touchpoints: sponsorship decks, grant applications, partner presentations, recognition materials, corporate email outreach\n• Respond to: GO's professionalism, strong branding, clear audience quality data, regional footprint, and documented outcomes\n• Biggest barrier: weak partnership presentation, unclear ROI, or inconsistent brand — requires polished, outcome-oriented materials\n• Strategic role: Stakeholder audience — crucial for funding, credibility, venue access, tourism alignment, and institutional growth",
       },
@@ -84,6 +94,8 @@ export const CLIENTS: ClientProfile[] = [
         id: "go-community-education",
         name: "Community / Education / Access Participants",
         type: "Institutional",
+        keyMessages:
+          "Messaging themes:\n• Access · Belonging · Youth development · Opportunity\n• Confidence through music · Community transformation\n• Support the next generation",
         audience:
           "• Children, teens, families, emerging artists, and early-career singers connected to GO through outreach and education — not traditional ticket buyers; diverse backgrounds across SWFL including underserved communities\n• Connected through Harmony Choir, youth programs, artist-development initiatives, and partner organizations\n• Motivated by access, belonging, musical growth, mentorship, and opportunity — not repertoire or event attendance\n• Key touchpoints: partner organizations, community outreach, grant reports, mission storytelling, impact pages, local nonprofit networks\n• Central to GO's grants, impact narrative, and community trust — helps define GO as a community-centered organization, not only a presenter\n• Biggest barrier: cost, transportation, awareness, and the perception that opera isn't for them\n• Strategic role: Mission audience — central to grants, impact storytelling, community trust, and long-term audience and artist development",
       },
@@ -120,12 +132,16 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "msd-established-affluent-retiree",
         name: "The Established Affluent Retiree",
+        keyMessages:
+          "Messaging themes:\n• \"The highest quality and peace of mind. Guaranteed.\"\n• Everything done in-house, one team and one standard.\n• Family-owned since 2003.\n• Proof over promises: reviews, warranty, Inc. 5000, named hardware and glass.",
         audience:
           "• Full-time or majority-time FL residents 60–78 (concentrated 65–74); $150K+ household income, often 7–8 figure net worth; Naples/Collier, Sarasota, Boca Raton, affluent Tampa/St. Pete pockets\n• Married/partnered empty-nesters; primary or later-life home in coastal or gated community; active in HOAs and country clubs where neighbor comparison is common\n• Quality-first, not price-driven; expect white-glove service matching home value; distrust subcontractor chains; reward proof, longevity, and named warranties\n• Draw: in-house design/manufacture/install, 10-year MY EZ Care Shield warranty, W-2 installers, Ultra-Clear low-iron glass, local longevity since 2003\n• Channels: Houzz (55–64 female-led cohort), local Google search, luxury print (Gulfshore Life, Naples Illustrated), showroom, designer referral\n• Strategic role: Revenue anchor — sets the premium standard and funds the business; first priority in the audience model",
       },
       {
         id: "msd-snowbird-seasonal",
         name: "The Snowbird and Seasonal Homeowner",
+        keyMessages:
+          "Messaging themes:\n• Quote before you head north, return to a finished shower.\n• One team that handles design, build, and install on your schedule.\n• Ready for the season, ready to host.",
         audience:
           "• Second-home owners 55–75; $150K+ household; FL coastal properties Oct–Apr; primary residences in the Northeast, Midwest, and Canada\n• Married couples, frequent hosts; design often female-led or designer-guided; planners who think in seasons\n• Want turnkey upgrade timed to their absence; prefer spring-quote, summer-install, fall-reveal rhythm; value remote coordination without hand-holding\n• Draw: scheduling certainty, trusted in-home coordination, clear follow-through, hosting-ready result on return\n• Channels: Houzz/Pinterest inspiration phase, local Google search, email timed to Feb–Apr and Oct–Nov demand windows, retargeting across the seasonal gap\n• Strategic role: Core demand engine — seasonal calendar should shape media flighting across all FL markets",
       },
@@ -133,24 +149,32 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "msd-quick-replacement",
         name: "The Quick-Replacement Glow-Up Buyer",
+        keyMessages:
+          "Messaging themes:\n• The fastest bathroom glow-up is not a remodel, it is the shower door.\n• One change, no renovation, no mess.\n• Custom-fit to the tile you already have.",
         audience:
           "• Homeowners 40–70, upper-middle to affluent; all MSD markets; homes 10+ years old; often female primary researcher\n• Tile already in place; want door replaced only — no full remodel; outcome-focused, impatient with disruption\n• Draw: 'biggest upgrade is the shower door, not a remodel' insight; before/after transformations; custom-fit on existing tile; fast, clean installation\n• Channels: Pinterest, Meta, Houzz for inspiration; Google search ('replace old shower door,' 'frameless shower door'); before/after social; retargeting\n• Strategic role: Growth and velocity — top-of-funnel volume and natural on-ramp to future higher-value projects",
       },
       {
         id: "msd-hurricane-rebuild",
         name: "The Hurricane Rebuild Homeowner",
+        keyMessages:
+          "Messaging themes:\n• Engineered for Florida's conditions and built to code.\n• One team from design to install, less for you to manage.\n• Rebuild once, rebuild right.",
         audience:
           "• Lee and Collier County homeowners 50–75; asset-rich coastal owners managing insurance proceeds; Fort Myers, Cape Coral, Fort Myers Beach, broader Lee/Collier coastline\n• Forced bathroom replacement after hurricane damage; anxious and proof-seeking; did not choose this project; FEMA 50/50 rebuild rule drives full bathroom rebuilds through 2026\n• Draw: hurricane-grade glass and Florida Building Code compliance; in-house model reduces coordination chaos; insurance navigation support; visible reliability\n• Channels: local Google search, dedicated hurricane-rebuild content hub, Google reviews, BBB, Nextdoor\n• Strategic role: Situational growth — event-driven demand in Lee/Collier; serve with targeted content, not always-on spend",
       },
       {
         id: "msd-aging-in-place",
         name: "The Aging-in-Place Upgrader",
+        keyMessages:
+          "Messaging themes:\n• Accessibility without the institutional look.\n• A safer shower that still looks like a retreat.\n• Designed for how you live now and for years to come.",
         audience:
           "• Homeowners 65+; middle-to-upper income, equity-rich; all MSD markets, strength in FL older population centers; couples or singles planning to remain 10+ years; sometimes guided by adult children\n• Safety-conscious but image-conscious; want dignity and design alongside accessibility; reject institutional/medical look\n• Draw: low-curb and curbless custom enclosures; MY EZ Care Shield easy-clean coating; secure hardware; spa-like look that hides accessibility function\n• Channels: Houzz/Pinterest, local Google search, showroom for hands-on reassurance, adult-child-targeted social\n• Strategic role: Cross-market growth — justifies aging-in-place specialist content as older population expands across all markets",
       },
       {
         id: "msd-carolinas-relocator",
         name: "The Carolinas Career-Stage Relocator",
+        keyMessages:
+          "Messaging themes:\n• Now open in your area.\n• The trusted family-owned name in custom frameless enclosures, here locally.\n• Everything done in-house, one team and one standard.",
         audience:
           "• Greater Charlotte, South Charlotte, Ballantyne, Lake Norman, Rock Hill, Fort Mill, and York County; homeowners 35–55, dual-income $90K–$150K+; finance/tech/banking/healthcare professionals; Sun Belt in-migration\n• Gen X/Millennial, digitally native, design-driven, modern-minimalist taste; unfamiliar with the MSD brand\n• Draw: 'now open' local availability; modern design proof; in-house design-to-install-and-warranty story; showroom experience\n• Persuasive sequence: Awareness → Credibility (family-owned track record) → Differentiation (in-house model) → Action\n• Channels: Instagram/Pinterest, local Google search, new showrooms as conversion theaters, builder/designer partnerships in new-construction communities\n• Strategic role: Geographic growth — performance here determines expansion pace beyond Florida",
       },
@@ -158,6 +182,8 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "msd-past-customers",
         name: "Past Customers and Referral Advocates",
+        keyMessages:
+          "Messaging themes:\n• Thank you, and tell a neighbor.\n• Still here, still standing behind your shower.\n• Ready when your next project is.",
         audience:
           "• 150,000+ past buyers across all 11 markets; concentrated 55+ in FL and 35–55 in the Carolinas; clustered in HOAs, gated communities, and country clubs where recommendations travel fast\n• Already convinced; carry strong goodwill; willing to recommend when prompted at the right moment; have future needs (second bath, second home, aging-in-place)\n• Draw: easy review/referral moments timed to peak satisfaction; recognition and loyalty gestures; reminders of additional needs\n• Channels: email/SMS to owned database, review-request automation 7–14 days post-install, structured referral program, Nextdoor\n• Strategic role: Highest-efficiency growth lever — reactivation and referral at the lowest acquisition cost in the model",
       },
@@ -165,12 +191,16 @@ export const CLIENTS: ClientProfile[] = [
       {
         id: "msd-design-specifiers",
         name: "Design Specifiers: Interior Designers and Architects",
+        keyMessages:
+          "Messaging themes:\n• A specification partner who protects your final result.\n• Custom capability, precise installation, no guesswork.\n• From custom enclosures to architectural glass through MAG.",
         audience:
           "• Design and architecture professionals 30–60; concentrated in luxury coastal FL (Naples, Sarasota, Boca) and Charlotte new construction; clients skew high-net-worth; MAG extends reach to architectural/new-construction projects\n• Reputation-protective and detail-driven; loyalty to vendors who make them look good; strong preference for partners who protect the final result on the jobsite\n• Draw: in-house custom manufacturing and precise field measurement; premium glass/coatings/hardware finishes to specify; MAG for architectural scope; co-marketing and education support\n• Channels: direct trade outreach, designer partnership program with portfolio updates and events, Houzz Pro, showroom as specification resource, Instagram for designer collaborations\n• Strategic role: Demand multiplier — winning the specifier wins the buyer; formalizing this relationship is one of the highest-return moves in the model",
       },
       {
         id: "msd-trade-partners",
         name: "Trade Partners: Builders, General Contractors, and Remodelers",
+        keyMessages:
+          "Messaging themes:\n• A trade partner you can count on.\n• Expert measure and install, no guesswork.\n• Built for real-world jobsites, responsive and low-friction.",
         audience:
           "• Builders, GCs, and remodelers 30–60; all MSD markets, concentrated in Naples/Sarasota luxury new construction and Charlotte/Orlando production builds; sourced through Lee BIA and trade referral networks\n• Schedule- and risk-driven; prioritize on-time execution, clean jobsites, fewer callbacks; value partners who coordinate smoothly and get it right the first time\n• Draw: expert measure and install with no guesswork; durable systems and premium hardware; responsive low-friction coordination; multi-unit consistency\n• Channels: trade directories (Lee BIA), direct sales/account management, builder preferred-vendor programs, trade events, referral-adjacent homeowner content\n• Strategic role: Volume channel — recurring multi-unit pipelines and referral-adjacent homeowner demand; active but underdeveloped; priority for structured development",
       },

@@ -23,6 +23,9 @@ export interface Campaign {
   id: string;
   name: string;
   audience: string; // pre-fills the Audience step when selected
+  /** Segment messaging themes (from the client's Organizational Audience Model in the
+   *  vault) — pre-fills Key messages / Messaging themes when the segment is picked. */
+  keyMessages?: string;
   /** Consumer segments buy/attend/give; institutional segments are organizations
    *  served through partnership/grant/mission materials, not ticket sales. */
   type?: "Consumer" | "Institutional";
@@ -62,6 +65,15 @@ export interface SizeOption {
   note?: string; // production note shown beside the size
   saveName?: string; // file-name stem for the brief, e.g. "Original-1080x1350"
   variants?: SizeVariant[]; // optional save-variants the user can tick per size
+  /** Format without fixed dimensions (e.g. print-ad fractions): when ticked, the wizard
+   *  asks for the actual size per publication, stored in BriefData.sizeSpecs. */
+  needsSpec?: boolean;
+}
+
+/** A free-form size entered by hand (name + actual dimensions). */
+export interface CustomSize {
+  name: string; // e.g. "Gulfshore Life · 1/3 page square"
+  spec: string; // e.g. "4.75×4.75\" trim, no bleed"
 }
 
 /** A single sourced image/asset row in the KV style guide. */
@@ -144,6 +156,8 @@ export interface BriefData {
   // Step 8 — specs
   sizeIds: string[];
   sizeVariants?: Record<string, string[]>; // sizeId -> selected variant ids
+  sizeSpecs?: Record<string, string>; // sizeId -> actual size per publication (needsSpec formats)
+  customSizes?: CustomSize[]; // free-form sizes, e.g. an odd print-ad unit for one publication
   duration?: string; // time-based deliverables (radio/TV/video) — e.g. ":30" or "60 sec"
   saveLocation?: string; // Drive folder link to auto-save into
   saveAs?: string; // base file name the designer should save deliverables as
@@ -171,6 +185,9 @@ export interface BriefData {
 
   // ── Advertising (TV Commercial) ──
   keyMessages?: string;
+  /** Last segment-derived text auto-filled into keyMessages/messagingThemes —
+   *  lets a segment change refresh the field only if the user hasn't edited it. */
+  segmentMessagesAuto?: string;
   smp?: string;
   toneDirection?: string;
 

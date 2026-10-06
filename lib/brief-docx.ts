@@ -587,13 +587,14 @@ export function buildBriefDocx(brief: BriefData): Document {
   }
 
   // Specs
-  if (sizes.length || brief.duration || brief.saveAs || brief.saveLocation) {
+  const customSizes = (brief.customSizes ?? []).filter((c) => c.name.trim() || c.spec.trim());
+  if (sizes.length || customSizes.length || brief.duration || brief.saveAs || brief.saveLocation) {
     children.push(h2("Platforms & Specifications"));
     if (brief.saveAs) {
       children.push(h3("Save deliverables as"));
       children.push(...body(brief.saveAs));
     }
-    if (sizes.length) {
+    if (sizes.length || customSizes.length) {
       children.push(h3("Sizes"));
       for (const sz of sizes) {
         if (!sz) continue;
@@ -622,11 +623,27 @@ export function buildBriefDocx(brief: BriefData): Document {
               spacing: { after: 30 },
               children: [
                 new TextRun({ text: sz.label, size: 23, font: s.body }),
+                ...(sz.needsSpec && brief.sizeSpecs?.[sz.id]?.trim()
+                  ? [new TextRun({ text: `: ${brief.sizeSpecs[sz.id].trim()}`, bold: true, size: 23, font: s.body })]
+                  : []),
                 ...(sz.note ? [new TextRun({ text: `  — ${sz.note}`, size: 20, italics: true, color: "6B7280", font: s.body })] : []),
               ],
             })
           );
         }
+      }
+      // Hand-entered sizes (e.g. an odd print unit for one publication).
+      for (const c of customSizes) {
+        children.push(
+          new Paragraph({
+            bullet: { level: 0 },
+            spacing: { after: 30 },
+            children: [
+              new TextRun({ text: c.name.trim() || "Custom size", size: 23, font: s.body }),
+              ...(c.spec.trim() ? [new TextRun({ text: `: ${c.spec.trim()}`, bold: true, size: 23, font: s.body })] : []),
+            ],
+          })
+        );
       }
     }
     if (brief.duration) {
